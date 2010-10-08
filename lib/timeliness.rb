@@ -3,6 +3,7 @@ require 'active_support/core_ext/module'
 require 'active_support/core_ext/hash'
 
 require 'timeliness/helpers'
+require 'timeliness/format_set'
 require 'timeliness/parser'
 
 module Timeliness
