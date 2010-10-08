@@ -1,17 +1,22 @@
 require 'date'
-require 'active_support/core_ext/module'
-require 'active_support/core_ext/hash'
+require 'forwardable'
 
 require 'timeliness/helpers'
 require 'timeliness/format_set'
 require 'timeliness/parser'
 
 module Timeliness
-  mattr_accessor :default_timezone
-  self.default_timezone = :utc
+  class << self
+    extend Forwardable
+    def_delegators Parser, :parse, :add_formats, :remove_formats, :remove_us_formats
+    attr_accessor :default_timezone, :dummy_date_for_time_type, :ambiguous_year_threshold
+  end
 
-  mattr_accessor :dummy_date_for_time_type
-  self.dummy_date_for_time_type = [ 2000, 1, 1 ]
+  # Default timezone
+  @default_timezone = :utc
+
+  # Set the dummy date part for a time type values.
+  @dummy_date_for_time_type = [ 2000, 1, 1 ]
 
   # Set the threshold value for a two digit year to be considered last century
   #
@@ -21,8 +26,5 @@ module Timeliness
   #     year = '29' is considered 2029
   #     year = '30' is considered 1930
   #
-  mattr_accessor :ambiguous_year_threshold
-  self.ambiguous_year_threshold = 30
-
-  delegate :parse, :add_formats, :remove_formats, :remove_us_formats, :to => Parser
+  @ambiguous_year_threshold = 30
 end

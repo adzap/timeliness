@@ -1,10 +1,9 @@
 $:.unshift(File.expand_path('lib'))
 
+require 'benchmark'
 require 'date'
 require 'parsedate'
-require 'benchmark'
 require 'rubygems'
-require 'active_record'
 
 require 'timeliness'
 
@@ -57,7 +56,6 @@ Benchmark.bm do |x|
       parse("12:xx:02", :time)
     end 
   }
-  
 
   x.report('timeliness - invalid value datetime') { 
     n.times do
@@ -76,6 +74,7 @@ Benchmark.bm do |x|
       parse("12:61:02", :time)
     end 
   }
+
   x.report('Rails fast date/time') { 
     n.times do
       "2000-01-04 12:12:12" =~ /\A(\d{4})-(\d{2})-(\d{2}) (\d{2})[\. :](\d{2})([\. :](\d{2}))?\Z/

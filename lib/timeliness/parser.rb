@@ -37,8 +37,7 @@ module Timeliness
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
     #       u = microseconds matches 1 to 6 digits
 
-    mattr_accessor :time_formats
-    @@time_formats = [
+    @time_formats = [
       'hh:nn:ss',
       'hh-nn-ss',
       'h:nn',
@@ -52,8 +51,7 @@ module Timeliness
       'h_ampm'
     ]
 
-    mattr_accessor :date_formats
-    @@date_formats = [
+    @date_formats = [
       'yyyy-mm-dd',
       'yyyy/mm/dd',
       'yyyy.mm.dd',
@@ -67,8 +65,7 @@ module Timeliness
       'd mmm yy'
     ]
 
-    mattr_accessor :datetime_formats
-    @@datetime_formats = [
+    @datetime_formats = [
       'yyyy-mm-dd hh:nn:ss.u',
       'yyyy-mm-dd hh:nn:ss',
       'yyyy-mm-dd h:nn',
@@ -92,8 +89,7 @@ module Timeliness
     # All tokens available for format construction. The token array is made of
     # regexp and key for format component mapping, if any.
     #
-    mattr_accessor :format_tokens
-    @@format_tokens = {
+    @format_tokens = {
       'ddd'  => [ '\w{3,9}' ],
       'dd'   => [ '\d{2}',   :day ],
       'd'    => [ '\d{1,2}', :day ],
@@ -122,10 +118,9 @@ module Timeliness
     # the time array, and the code to place in the time array.
     #
     # If the position is nil, then the value won't be put in the time array. If the
-    # code slot is empty, then just the raw value is used.
+    # code is nil, then just the raw value is used.
     #
-    mattr_accessor :format_components
-    @@format_components = {
+    @format_components = {
       :year     => [ 0, 'unambiguous_year(year)'],
       :month    => [ 1, 'month_index(month)'],
       :day      => [ 2 ],
@@ -139,16 +134,9 @@ module Timeliness
 
     US_FORMAT_REGEXP = /\Am{1,2}[^m]/
 
-    mattr_reader :time_format_set, :date_format_set, :datetime_format_set
-
     class << self
-
-      def compile_format_sets
-        @@sorted_token_keys   = nil
-        @@time_format_set     = FormatSet.compile(@@time_formats)
-        @@date_format_set     = FormatSet.compile(@@date_formats)
-        @@datetime_format_set = FormatSet.compile(@@datetime_formats)
-      end
+      attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components
+      attr_reader :time_format_set, :date_format_set, :datetime_format_set
 
       def parse(value, type, options={})
         return value unless value.is_a?(String)
@@ -168,10 +156,10 @@ module Timeliness
         # Enforce strict date part validity which Time class does not
         return nil unless Date.valid_civil?(*time_array[0..2])
 
-        if timezone_aware
+        if timezone_aware && Time.respond_to?(:zone)
           Time.zone.local(*time_array)
         else
-          Time.time_with_datetime_fallback(Timeliness.default_timezone, *time_array)
+          time_with_datetime_fallback(Timeliness.default_timezone, *time_array)
         end
       rescue ArgumentError, TypeError
         nil
@@ -211,7 +199,7 @@ module Timeliness
       #
       def add_formats(type, *add_formats)
         formats = send("#{type}_formats")
-        options = add_formats.extract_options!
+        options = add_formats.last.is_a?(Hash) ? add_formats.pop : {}
         before  = options[:before]
         raise "Format for :before option #{format} was not found." if before && !formats.include?(before)
 
@@ -229,12 +217,19 @@ module Timeliness
       # The mmm token is ignored as its not ambiguous.
       #
       def remove_us_formats
-        @@date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
-        @@datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
+        @date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
+        @datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
+      end
+
+      def compile_format_sets
+        @sorted_token_keys   = nil
+        @time_format_set     = FormatSet.compile(time_formats)
+        @date_format_set     = FormatSet.compile(date_formats)
+        @datetime_format_set = FormatSet.compile(datetime_formats)
       end
 
       def sorted_token_keys
-        @@sorted_token_keys ||= format_tokens.keys.sort {|a,b| a.size <=> b.size }.reverse
+        @sorted_token_keys ||= format_tokens.keys.sort {|a,b| a.size <=> b.size }.reverse
       end
 
     private
@@ -258,6 +253,14 @@ module Timeliness
             [ datetime_format_set, date_format_set ]
           end
         end
+      end
+
+      # Taken from ActiveSupport and simplified
+      def time_with_datetime_fallback(utc_or_local, year, month=1, day=1, hour=0, min=0, sec=0, usec=0)
+        ::Time.send(utc_or_local, year, month, day, hour, min, sec, usec)
+      rescue
+        offset = utc_or_local == :local ? DateTime.local_offset : 0
+        ::DateTime.civil(year, month, day, hour, min, sec, offset)
       end
 
     end
