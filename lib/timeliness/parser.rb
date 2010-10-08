@@ -36,7 +36,7 @@ module Timeliness
     #     mmm = month long name (e.g. 'Jul' or 'July')
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
     #       u = microseconds matches 1 to 6 digits
-    
+
     mattr_accessor :time_formats
     @@time_formats = [
       'hh:nn:ss',
@@ -178,18 +178,17 @@ module Timeliness
       end
 
       def _parse(string, type, options={})
-        md  = nil
-        set = format_set(type, string).find {|set| md = set.regexp.match(string) }
+        match_data = nil
+        set = format_set(type, string).find {|set| match_data = set.regexp.match(string) }
 
-        if md
-          captures = md.captures[1..-1]
+        if match_data
+          captures = match_data.captures[1..-1]
           index  = captures.index(string)
-          format = set.format_for_index(index)
           start  = index + 1
           values = captures[start..(start+7)].compact
-          set.send(:"format_#{format}", *values)
+          set.process_format_values(set.format_for_index(index), values)
         end
-      rescue => e
+      rescue
         nil
       end
 
@@ -247,7 +246,7 @@ module Timeliness
         when :time
           # gives a speed-up for time string as datetime
           if string.length < 11
-            [ time_format_set ] 
+            [ time_format_set ]
           else
             [ time_format_set, datetime_format_set ]
           end

@@ -4,26 +4,6 @@ module Timeliness
 
     attr_reader :formats, :regexp
 
-    def initialize(formats)
-      @formats = formats
-    end
-
-    def compile!
-      regexp_string = ''
-      @match_indexes = {}
-      @formats.inject(0) { |match_index, format|
-        token_count, format_regexp = self.class.compile_format(format)
-        @match_indexes[match_index] = format
-        regexp_string = "#{regexp_string}(#{format_regexp})|"
-        match_index + token_count + 1 # add one for wrapper capture
-      }
-      @regexp = Regexp.new("^(#{regexp_string.chop})$")
-    end
-
-    def format_for_index(index)
-      @match_indexes[index]
-    end
-
     def self.compile(formats)
       set = new(formats)
       set.compile!
@@ -40,7 +20,7 @@ module Timeliness
         regexp_str, arg_key = *Parser.format_tokens[token]
         if format.gsub!(/#{token}/, "%<#{found_tokens.size}>")
           if arg_key
-            regexp_str = "(#{regexp_str})" 
+            regexp_str = "(#{regexp_str})"
             value_token_count += 1
           end
           found_tokens << [regexp_str, arg_key]
@@ -50,13 +30,13 @@ module Timeliness
       # Replace placeholders with token regexps
       format.scan(/%<(\d)>/).each {|token_index|
         token_index = token_index.first
-        token = found_tokens[token_index.to_i]
-        format.gsub!("%<#{token_index}>", token[0])
-        token_order << token[1]
+        regexp_str, arg_key = found_tokens[token_index.to_i]
+        format.gsub!("%<#{token_index}>", regexp_str)
+        token_order << arg_key
       }
 
       define_format_method(token_order.compact, string_format)
-      return value_token_count, format
+      return format, value_token_count
     rescue
       raise "The following format regular expression failed to compile: #{format}\n from format #{string_format}."
     end
@@ -78,5 +58,28 @@ module Timeliness
       DEF
     end
 
+    def initialize(formats)
+      @formats = formats
+    end
+
+    def compile!
+      regexp_string = ''
+      @match_indexes = {}
+      @formats.inject(0) { |match_index, format|
+        format_regexp, token_count = self.class.compile_format(format)
+        regexp_string = "#{regexp_string}(#{format_regexp})|"
+        @match_indexes[match_index] = format
+        match_index + token_count + 1 # add one for wrapper capture
+      }
+      @regexp = Regexp.new("^(#{regexp_string.chop})$")
+    end
+
+    def format_for_index(index)
+      @match_indexes[index]
+    end
+
+    def process_format_values(format, values)
+      send(:"format_#{format}", *values)
+    end
   end
 end
