@@ -166,15 +166,13 @@ module Timeliness
       end
 
       def _parse(string, type, options={})
-        match_data = nil
-        set = format_set(type, string).find {|set| match_data = set.regexp.match(string) }
-
-        if match_data
-          captures = match_data.captures[1..-1]
-          index  = captures.index(string)
-          start  = index + 1
-          values = captures[start..(start+7)].compact
-          set.process_format_values(set.format_for_index(index), values)
+        if options[:strict]
+          set = send("#{type}_format_set")
+          set.match(string)
+        else
+          values = nil
+          format_set(type, string).find {|set| values = set.match(string) }
+          values
         end
       rescue
         nil

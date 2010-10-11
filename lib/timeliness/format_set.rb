@@ -76,12 +76,15 @@ module Timeliness
       @regexp = Regexp.new("^(#{regexp_string.chop})$")
     end
 
-    def format_for_index(index)
-      @match_indexes[index]
+    def match(string)
+      if match_data = @regexp.match(string)
+        captures = match_data.captures[1..-1]
+        index  = captures.index(string)
+        start  = index + 1
+        values = captures[start..(start+7)].compact
+        send(:"format_#{@match_indexes[index]}", *values)
+      end
     end
 
-    def process_format_values(format, values)
-      send(:"format_#{format}", *values)
-    end
   end
 end
