@@ -4,6 +4,7 @@ require 'forwardable'
 require 'timeliness/helpers'
 require 'timeliness/format_set'
 require 'timeliness/parser'
+require 'timeliness/version'
 
 module Timeliness
   class << self
