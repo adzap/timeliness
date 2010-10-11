@@ -243,7 +243,7 @@ module Timeliness
           if string.length < 11
             [ time_format_set ]
           else
-            [ time_format_set, datetime_format_set ]
+            [ datetime_format_set, time_format_set ]
           end
         when :datetime
           # gives a speed-up for date string as datetime
