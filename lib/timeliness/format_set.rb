@@ -70,21 +70,20 @@ module Timeliness
       @match_indexes  = {}
       @formats.inject(0) { |index, format|
         format_regexp, token_count = self.class.compile_format(format)
-        @format_regexps[format] = Regexp.new("^((#{format_regexp}))$")
+        @format_regexps[format] = Regexp.new("^(#{format_regexp})$")
         @match_indexes[index]   = format
         regexp_string = "#{regexp_string}(#{format_regexp})|"
         index + token_count + 1 # add one for wrapper capture
       }
-      @regexp = Regexp.new("^(#{regexp_string.chop})$")
+      @regexp = Regexp.new("^(?:#{regexp_string.chop})$")
     end
 
     def match(string, format=nil)
       match_regexp = format ? @format_regexps[format] : @regexp
       if match_data = match_regexp.match(string)
-        captures = match_data.captures[1..-1]
-        index    = captures.index(string)
+        index    = match_data.captures.index(string)
         start    = index + 1
-        values   = captures[start..(start+7)].compact
+        values   = match_data.captures[start..(start+7)].compact
         format ||= @match_indexes[index]
         send(:"format_#{format}", *values)
       end
