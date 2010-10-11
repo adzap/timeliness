@@ -82,8 +82,8 @@ module Timeliness
       'ddd, dd mmm yyyy hh:nn:ss tz', # RFC 822
       'ddd, dd mmm yyyy hh:nn:ss zo', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
-      'yyyy-mm-ddThh:nn:ssZ', # iso 8601 without zone offset
-      'yyyy-mm-ddThh:nn:sszo' # iso 8601 with zone offset
+      'yyyy-mm-ddThh:nn:ssZ', # ISO 8601 without zone offset
+      'yyyy-mm-ddThh:nn:sszo' # ISO 8601 with zone offset
     ]
 
     # All tokens available for format construction. The token array is made of
@@ -153,7 +153,7 @@ module Timeliness
       end
 
       def make_time(time_array, timezone_aware=false)
-        # Enforce strict date part validity which Time class does not
+        # Enforce strict date part validity which the Time class does not
         return nil unless Date.valid_civil?(*time_array[0..2])
 
         if timezone_aware && Time.respond_to?(:zone)
@@ -232,6 +232,8 @@ module Timeliness
 
     private
 
+      # Returns format for type and other possible matching format set based on type
+      # and value length.
       def format_set(type, string)
         case type
         when :date
