@@ -59,17 +59,17 @@ describe Timeliness::Parser do
       time_array.should == [2000,2,1,12,13,14,nil,-37800]
     end
 
-    # context "with format option" do
-    #   it "should return values if string matches specified format" do
-    #     time_array = parser._parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
-    #     time_array.should == [2000,2,1,12,13,14,nil]
-    #   end
+    context "with format option" do
+      it "should return values if string matches specified format" do
+        time_array = parser._parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+        time_array.should == [2000,2,1,12,13,14,nil]
+      end
 
-    #   it "should return nil if string does not match specified format" do
-    #     time_array = parser._parse('2000-02-01 12:13', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
-    #     time_array.should be_nil
-    #   end
-    # end
+      it "should return nil if string does not match specified format" do
+        time_array = parser._parse('2000-02-01 12:13', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+        time_array.should be_nil
+      end
+    end
 
     context "date with ambiguous year" do
       it "should return year in current century if year below threshold" do
