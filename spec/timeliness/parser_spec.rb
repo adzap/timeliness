@@ -123,7 +123,7 @@ describe Timeliness::Parser do
 
   context "adding formats" do
     before do
-      parser.compile_format_sets
+      parser.compile_formats
     end
 
     it "should add format to format array" do
@@ -176,7 +176,7 @@ describe Timeliness::Parser do
 
     after do
       parser.time_formats << 'h.nn_ampm'
-      parser.compile_format_sets
+      parser.compile_formats
     end
   end
 

@@ -186,7 +186,7 @@ module Timeliness
             raise "Format #{format} not found in #{type} formats"
           end
         end
-        compile_format_sets
+        compile_formats
       end
 
       # Adds new formats. Must specify format type and can specify a :before
@@ -207,7 +207,7 @@ module Timeliness
           index = before ? formats.index(before) : -1
           formats.insert(index, format)
         end
-        compile_format_sets
+        compile_formats
       end
 
       # Removes formats where the 1 or 2 digit month comes first, to eliminate
@@ -219,7 +219,7 @@ module Timeliness
         @datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
       end
 
-      def compile_format_sets
+      def compile_formats
         @sorted_token_keys   = nil
         @time_format_set     = FormatSet.compile(time_formats)
         @date_format_set     = FormatSet.compile(date_formats)
@@ -268,4 +268,4 @@ module Timeliness
   end
 end
 
-Timeliness::Parser.compile_format_sets
+Timeliness::Parser.compile_formats
