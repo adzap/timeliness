@@ -137,7 +137,7 @@ module Timeliness
     class << self
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components
 
-      def parse(value, type, options={})
+      def parse(value, type=nil, options={})
         return value unless value.is_a?(String)
 
         time_array = _parse(value, type, options)
@@ -146,6 +146,12 @@ module Timeliness
         if type == :date
           time_array[3..7] = nil
         elsif type == :time
+          time_array[0..2] = current_date(options)
+        elsif type.nil?
+          dummy_date = current_date(options)
+          time_array[0] ||= dummy_date[0]
+          time_array[1] ||= dummy_date[1]
+          time_array[2] ||= dummy_date[2]
         end
         make_time(time_array[0..6], options[:zone])
       end
@@ -165,7 +171,7 @@ module Timeliness
         nil
       end
 
-      def _parse(string, type, options={})
+      def _parse(string, type=nil, options={})
         if options[:strict]
           set = send("#{type}_format_set")
           set.match(string, options[:format])
@@ -236,6 +242,24 @@ module Timeliness
       end
 
     private
+
+      def current_date(options)
+        now = if options[:now]
+          options[:now]
+        elsif options[:zone]
+          case options[:zone]
+          when :utc, :local
+            Time.now.send("get#{options[:zone] || Timeliness.default_timezone}")
+          when :current
+            Time.current
+          else
+            Time.use_zone(options[:zone]) { Time.current }
+          end
+        end
+        now = Array(now).reverse[4..6] if now
+        now ||= Timeliness.date_for_time_type
+        now[0..2]
+      end
 
       # Returns format for type and other possible matching format set based on type
       # and value length. Gives minor speed-up by checking string length.

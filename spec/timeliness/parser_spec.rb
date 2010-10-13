@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Timeliness::Parser do
-
   context "parse" do
     it "should return time object for valid time string" do
       parse("2000-01-01 12:13:14", :datetime).should be_kind_of(Time)
@@ -70,24 +69,58 @@ describe Timeliness::Parser do
   end
 
   context "_parse" do
-    it "should return date array from date string" do
-      time_array = parser._parse('2000-02-01', :date)
-      time_array.should == [2000,2,1,nil,nil,nil,nil]
+    context "with type" do
+      it "should return date array from date string" do
+        time_array = parser._parse('2000-02-01', :date)
+        time_array.should == [2000,2,1,nil,nil,nil,nil]
+      end
+
+      it "should return time array from time string" do
+        time_array = parser._parse('12:13:14', :time)
+        time_array.should == [nil,nil,nil,12,13,14,nil]
+      end
+
+      it "should return datetime array from datetime string" do
+        time_array = parser._parse('2000-02-01 12:13:14', :datetime)
+        time_array.should == [2000,2,1,12,13,14,nil]
+      end
+
+      it "should return date array from date string when type is datetime" do
+        time_array = parser._parse('2000-02-01', :datetime)
+        time_array.should == [2000,2,1,nil,nil,nil,nil]
+      end
+
+      it "should return datetime array from datetime string when type is date" do
+        time_array = parser._parse('2000-02-01 12:13:14', :date)
+        time_array.should == [2000,2,1,12,13,14,nil]
+      end
     end
 
-    it "should return datetime array from datetime string" do
-      time_array = parser._parse('2000-02-01 12:13:14', :datetime)
-      time_array.should == [2000,2,1,12,13,14,nil]
-    end
+    context "with no type" do
+      it "should return date array from date string" do
+        time_array = parser._parse('2000-02-01')
+        time_array.should == [2000,2,1,nil,nil,nil,nil]
+      end
 
-    it "should return date array from date string when type is datetime" do
-      time_array = parser._parse('2000-02-01', :datetime)
-      time_array.should == [2000,2,1,nil,nil,nil,nil]
-    end
+      it "should return time array from time string" do
+        time_array = parser._parse('12:13:14', :time)
+        time_array.should == [nil,nil,nil,12,13,14,nil]
+      end
 
-    it "should return datetime array from datetime string when type is date" do
-      time_array = parser._parse('2000-02-01 12:13:14', :date)
-      time_array.should == [2000,2,1,12,13,14,nil]
+      it "should return datetime array from datetime string" do
+        time_array = parser._parse('2000-02-01 12:13:14')
+        time_array.should == [2000,2,1,12,13,14,nil]
+      end
+
+      it "should return date array from date string when type is datetime" do
+        time_array = parser._parse('2000-02-01')
+        time_array.should == [2000,2,1,nil,nil,nil,nil]
+      end
+
+      it "should return datetime array from datetime string when type is date" do
+        time_array = parser._parse('2000-02-01 12:13:14')
+        time_array.should == [2000,2,1,12,13,14,nil]
+      end
     end
 
     context "with :strict => true" do
@@ -179,6 +212,57 @@ describe Timeliness::Parser do
           time.utc_offset.should == 8.hours
         end
       end
+    end
+  end
+
+  describe "current_date" do
+    before(:all) do
+      Timecop.freeze(2010,1,1,0,0,0)
+    end
+
+    context "with no options" do
+      it 'should return date_for_time_type values with no options' do
+        current_date.should == Timeliness.date_for_time_type
+      end
+    end
+
+    context "with :now option" do
+      it 'should return date array from Time value' do
+        time = Time.now
+        date_array = [time.year, time.month, time.day]
+        current_date(:now => time).should == date_array
+      end
+    end
+
+    context "with :zone option" do
+      it 'should return date array for utc zone' do
+        time = Time.now.getutc
+        date_array = [time.year, time.month, time.day]
+        current_date(:zone => :utc).should == date_array
+      end
+
+      it 'should return date array for local zone' do
+        time = Time.now
+        date_array = [time.year, time.month, time.day]
+        current_date(:zone => :local).should == date_array
+      end
+
+      it 'should return date array for current zone' do
+        Time.zone = 'New York'
+        time = Time.current
+        date_array = [time.year, time.month, time.day]
+        current_date(:zone => :current).should == date_array
+      end
+
+      it 'should return date array for current zone' do
+        time = Time.use_zone('New York') { Time.current }
+        date_array = [time.year, time.month, time.day]
+        current_date(:zone => 'New York').should == date_array
+      end
+    end
+
+    after(:all) do
+      Timecop.return
     end
   end
 
@@ -277,6 +361,10 @@ describe Timeliness::Parser do
 
   def parse(*args)
     Timeliness::Parser.parse(*args)
+  end
+
+  def current_date(options={})
+    parser.send(:current_date, options)
   end
 
   def should_parse(*args)
