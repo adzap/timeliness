@@ -262,7 +262,7 @@ module Timeliness
       def time_with_datetime_fallback(utc_or_local, year, month=1, day=1, hour=0, min=0, sec=0, usec=0)
         ::Time.send(utc_or_local, year, month, day, hour, min, sec, usec)
       rescue
-        offset = utc_or_local == :local ? DateTime.local_offset : 0
+        offset = utc_or_local == :local ? (::Time.local(2007).utc_offset.to_r/86400) : 0
         ::DateTime.civil(year, month, day, hour, min, sec, offset)
       end
 
