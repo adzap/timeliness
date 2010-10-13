@@ -24,11 +24,11 @@ describe Timeliness::Parser do
     end
 
     it "should ignore time in datetime string for date type" do
-      parse('2000-02-01 12:13', :date).should == Date.new(2000,2,1)
+      parse('2000-02-01 12:13', :date).should == Time.local(2000,2,1)
     end
 
     it "should ignore date in datetime string for time type" do
-      parse('2010-02-01 12:13', :time).should == Time.utc(2000,1,1,12,13)
+      parse('2010-02-01 12:13', :time).should == Time.local(2000,1,1,12,13)
     end
 
     it "should return same Time object when passed a Time object" do

@@ -13,8 +13,8 @@ module Timeliness
     attr_accessor :default_timezone, :dummy_date_for_time_type, :ambiguous_year_threshold
   end
 
-  # Default timezone
-  @default_timezone = :utc
+  # Default timezone (:local or :utc)
+  @default_timezone = :local
 
   # Set the dummy date part for a time type values.
   @dummy_date_for_time_type = [ 2000, 1, 1 ]
