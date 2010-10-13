@@ -7,12 +7,28 @@ describe Timeliness::Parser do
       parse("2000-01-01 12:13:14", :datetime).should be_kind_of(Time)
     end
 
-    it "should return nil for time string with invalid date part" do
-      parse("2000-02-30 12:13:14", :datetime).should be_nil
+    it "should return nil for datetime string with invalid date part" do
+      should_not_parse("2000-02-30 12:13:14", :datetime)
     end
 
-    it "should return nil for time string with invalid time part" do
-      parse("2000-02-01 25:13:14", :datetime).should be_nil
+    it "should return nil for datetime string with invalid time part" do
+      should_not_parse("2000-02-01 25:13:14", :datetime)
+    end
+
+    it "should return nil for invalid date string" do
+      should_not_parse("2000-02-30", :date)
+    end
+
+    it "should return nil for invalid time string" do
+      should_not_parse("25:00:00", :time)
+    end
+
+    it "should ignore time in datetime string for date type" do
+      parse('2000-02-01 12:13', :date).should == Date.new(2000,2,1)
+    end
+
+    it "should ignore date in datetime string for time type" do
+      parse('2010-02-01 12:13', :time).should == Time.utc(2000,1,1,12,13)
     end
 
     it "should return same Time object when passed a Time object" do
@@ -20,50 +36,52 @@ describe Timeliness::Parser do
       parse(value, :datetime).should == value
     end
 
-    it "should convert time string into current timezone" do
-      Time.zone = 'Melbourne'
-      time = parse("2000-01-01 12:13:14", :datetime, :timezone_aware => true)
-      Time.zone.utc_offset.should == 10.hours
+    context "with :timezone_aware => true" do
+      it "should return time object in current timezone" do
+        Time.zone = 'Melbourne'
+        time = parse("2000-01-01 12:13:14", :datetime, :timezone_aware => true)
+        Time.zone.utc_offset.should == 10.hours
+      end
     end
 
-    it "should return nil for invalid date string" do
-      parse("2000-02-30", :date).should be_nil
-    end
-
-    it "should ignore time for date type" do
-      value = parser.parse('2000-02-01 12:13', :date)
-      value.should == Date.new(2000,2,1)
-    end
-
-    it "should ignore date for time type" do
-      value = parser.parse('2010-02-01 12:13', :time)
-      value.should == Time.utc(2000,1,1,12,13)
-    end
-
-    def parse(*args)
-      Timeliness::Parser.parse(*args)
-    end
   end
 
   context "_parse" do
-    it "should return date array from time string" do
+    it "should return date array from date string" do
       time_array = parser._parse('2000-02-01', :date)
       time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
-    it "should return datetime array from string value" do
+    it "should return datetime array from datetime string" do
       time_array = parser._parse('2000-02-01 12:13:14', :datetime)
       time_array.should == [2000,2,1,12,13,14,nil]
     end
 
-    it "should parse date string when type is datetime" do
+    it "should return date array from date string when type is datetime" do
       time_array = parser._parse('2000-02-01', :datetime)
       time_array.should == [2000,2,1,nil,nil,nil,nil]
     end
 
-    it "should parse datetime string when type is date" do
+    it "should return datetime array from datetime string when type is date" do
       time_array = parser._parse('2000-02-01 12:13:14', :date)
       time_array.should == [2000,2,1,12,13,14,nil]
+    end
+
+    context "with :strict => true" do
+      it "should return nil from date string when type is datetime" do
+        time_array = parser._parse('2000-02-01', :datetime, :strict => true)
+        time_array.should be_nil
+      end
+
+      it "should return nil from datetime string when type is date" do
+        time_array = parser._parse('2000-02-01 12:13:14', :date, :strict => true)
+        time_array.should be_nil
+      end
+
+      it "should return nil from datetime string when type is time" do
+        time_array = parser._parse('2000-02-01 12:13:14', :time, :strict => true)
+        time_array.should be_nil
+      end
     end
 
     it "should return nil if time hour is out of range for AM meridian" do
@@ -73,7 +91,7 @@ describe Timeliness::Parser do
       time_array.should == nil
     end
 
-    context "with format option" do
+    context "with :format option" do
       it "should return values if string matches specified format" do
         time_array = parser._parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
         time_array.should == [2000,2,1,12,13,14,nil]
@@ -121,9 +139,9 @@ describe Timeliness::Parser do
     end
   end
 
-  context "adding formats" do
+  context "add_formats" do
     before do
-      parser.compile_formats
+      @formats = parser.time_formats.dup
     end
 
     it "should add format to format array" do
@@ -131,43 +149,53 @@ describe Timeliness::Parser do
       parser.time_formats.should include("h o'clock")
     end
 
-    it "should match new format after its added" do
-      validate("12 o'clock", :time).should be_false
+    it "should parse new format after its added" do
+      should_not_parse("12 o'clock", :time)
       parser.add_formats(:time, "h o'clock")
-      validate("12 o'clock", :time).should be_true
-    end
-
-    it "should add format before specified format and be higher precedence" do
-      parser.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
-      validate("59:23:58", :time).should be_true
-      time_array = parser._parse('59:23:58', :time)
-      time_array.should == [nil,nil,nil,23,58,59,nil]
+      should_parse("12 o'clock", :time)
     end
 
     it "should raise error if format exists" do
       lambda { parser.add_formats(:time, "hh:nn:ss") }.should raise_error()
     end
 
-    it "should raise error if format exists" do
-      lambda { parser.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.should raise_error()
+    context "with :before option" do
+      it "should add new format with higher precedence" do
+        parser.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
+        time_array = parser._parse('59:23:58', :time)
+        time_array.should == [nil,nil,nil,23,58,59,nil]
+      end
+
+      it "should raise error if :before format does not exist" do
+        lambda { parser.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.should raise_error()
+      end
     end
 
     after do
-      parser.time_formats.delete("h o'clock")
-      parser.time_formats.delete("ss:hh:nn")
+      parser.time_formats = @formats
+      parser.compile_formats
     end
   end
 
-  context "removing formats" do
+  context "remove_formats" do
+    before do
+      @formats = parser.time_formats.dup
+    end
+
     it "should remove format from format array" do
       parser.remove_formats(:time, 'h.nn_ampm')
       parser.time_formats.should_not include("h o'clock")
     end
 
-    it "should not match time after its format is removed" do
-      validate('2.12am', :time).should be_true
+    it "should remove multiple formats from format array" do
       parser.remove_formats(:time, 'h.nn_ampm')
-      validate('2.12am', :time).should be_false
+      parser.time_formats.should_not include("h o'clock")
+    end
+
+    it "should not allow format to be parsed" do
+      should_parse('2.12am', :time)
+      parser.remove_formats(:time, 'h.nn_ampm')
+      should_not_parse('2.12am', :time)
     end
 
     it "should raise error if format does not exist" do
@@ -175,18 +203,16 @@ describe Timeliness::Parser do
     end
 
     after do
-      parser.time_formats << 'h.nn_ampm'
+      parser.time_formats = @formats
       parser.compile_formats
     end
   end
 
-  context "removing US formats" do
-    it "should validate a date as European format when US formats removed" do
-      time_array = parser._parse('01/02/2000', :date)
-      time_array.should == [2000,1,2,nil,nil,nil,nil]
+  context "remove_us_formats" do
+    it "should allow ambiguous date to be parsed as European format" do
+      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
       parser.remove_us_formats
-      time_array = parser._parse('01/02/2000', :date)
-      time_array.should == [2000,2,1,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
     end
   end
 
@@ -194,7 +220,15 @@ describe Timeliness::Parser do
     Timeliness::Parser
   end
 
-  def validate(time_string, type)
-    !(parser.send("#{type}_format_set").regexp =~ time_string).nil?
+  def parse(*args)
+    Timeliness::Parser.parse(*args)
+  end
+
+  def should_parse(*args)
+    parser.parse(*args).should_not be_nil
+  end
+
+  def should_not_parse(*args)
+    parser.parse(*args).should be_nil
   end
 end
