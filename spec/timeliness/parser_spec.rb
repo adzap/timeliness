@@ -36,11 +36,34 @@ describe Timeliness::Parser do
       parse(value, :datetime).should == value
     end
 
-    context "with :timezone_aware => true" do
-      it "should return time object in current timezone" do
-        Time.zone = 'Melbourne'
-        time = parse("2000-01-01 12:13:14", :datetime, :timezone_aware => true)
-        Time.zone.utc_offset.should == 10.hours
+    describe "with :zone option" do
+      context ":utc" do
+        it "should return time object in utc timezone" do
+          time = parse("2000-06-01 12:13:14", :datetime, :zone => :utc)
+          time.utc_offset.should == 0
+        end
+      end
+
+      context ":local" do
+        it "should return time object in local system timezone" do
+          time = parse("2000-06-01 12:13:14", :datetime, :zone => :local)
+          time.utc_offset.should == 10.hours
+        end
+      end
+
+      context ":current" do
+        it "should return time object in current timezone" do
+          Time.zone = 'Adelaide'
+          time = parse("2000-06-01 12:13:14", :datetime, :zone => :current)
+          time.utc_offset.should == 9.5.hours
+        end
+      end
+
+      context "named zone" do
+        it "should return time object in the timezone" do
+          time = parse("2000-06-01 12:13:14", :datetime, :zone => 'Australia/Perth')
+          time.utc_offset.should == 8.hours
+        end
       end
     end
 
@@ -126,16 +149,36 @@ describe Timeliness::Parser do
     end
   end
 
-  context "make_time" do
-    it "should create time using current timezone" do
-      time = Timeliness::Parser.make_time([2000,1,1,12,0,0])
-      time.zone.should == "UTC"
-    end
+  describe "make_time" do
+    context "with zone value" do
+      context ":utc" do
+        it "should return time object in utc timezone" do
+          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], :utc)
+          time.utc_offset.should == 0
+        end
+      end
 
-    it "should create time using current timezone" do
-      Time.zone = 'Melbourne'
-      time = Timeliness::Parser.make_time([2000,1,1,12,0,0], true)
-      time.zone.should == "EST"
+      context ":local" do
+        it "should return time object in local system timezone" do
+          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], :local)
+          time.utc_offset.should == 10.hours
+        end
+      end
+
+      context ":current" do
+        it "should return time object in current timezone" do
+          Time.zone = 'Adelaide'
+          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], :current)
+          time.utc_offset.should == 9.5.hours
+        end
+      end
+
+      context "named zone" do
+        it "should return time object in the timezone" do
+          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], 'Perth')
+          time.utc_offset.should == 8.hours
+        end
+      end
     end
   end
 

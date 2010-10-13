@@ -148,17 +148,19 @@ module Timeliness
         elsif type == :time
           time_array[0..2] = Timeliness.dummy_date_for_time_type
         end
-        make_time(time_array[0..6], options[:timezone_aware])
+        make_time(time_array[0..6], options[:zone])
       end
 
-      def make_time(time_array, timezone_aware=false)
-        # Enforce strict date part validity which the Time class does not
-        return nil unless Date.valid_civil?(*time_array[0..2])
+      def make_time(time_array, zone=nil)
+        return nil unless fast_date_valid_with_fallback(*time_array[0..2])
 
-        if timezone_aware && Time.respond_to?(:zone)
+        case zone
+        when nil, :utc, :local
+          time_with_datetime_fallback(zone || Timeliness.default_timezone, *time_array)
+        when :current
           Time.zone.local(*time_array)
         else
-          time_with_datetime_fallback(Timeliness.default_timezone, *time_array)
+          Time.use_zone(zone) { Time.zone.local(*time_array) }
         end
       rescue ArgumentError, TypeError
         nil
@@ -269,6 +271,12 @@ module Timeliness
       rescue
         offset = utc_or_local == :local ? (::Time.local(2007).utc_offset.to_r/86400) : 0
         ::DateTime.civil(year, month, day, hour, min, sec, offset)
+      end
+
+      # Enforce strict date part validity which the Time class does not.
+      # Only does full date check if month and day are possibly invalid.
+      def fast_date_valid_with_fallback(year, month, day)
+        month < 13 && (day < 29 || Date.valid_civil?(year, month, day))
       end
 
     end
