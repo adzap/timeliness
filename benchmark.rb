@@ -1,8 +1,9 @@
 $:.unshift(File.expand_path('lib'))
 
 require 'benchmark'
+require 'time'
 require 'parsedate'
-require 'lib/timeliness'
+require 'timeliness'
 
 n = 10000
 Benchmark.bm do |x|
@@ -27,6 +28,24 @@ Benchmark.bm do |x|
   x.report('timeliness - time') {
     n.times do
       Timeliness::Parser.parse("12:01:02", :time)
+    end
+  }
+
+  x.report('timeliness - no type with datetime value') {
+    n.times do
+      Timeliness::Parser.parse("2000-01-04 12:12:12")
+    end
+  }
+
+  x.report('timeliness - no type with date value') {
+    n.times do
+      Timeliness::Parser.parse("2000-01-04")
+    end
+  }
+
+  x.report('timeliness - no type with time value') {
+    n.times do
+      Timeliness::Parser.parse("12:01:02")
     end
   }
 
@@ -69,21 +88,34 @@ Benchmark.bm do |x|
   x.report('Rails fast date/time') {
     n.times do
       "2000-01-04 12:12:12" =~ /\A(\d{4})-(\d{2})-(\d{2}) (\d{2})[\. :](\d{2})([\. :](\d{2}))?\Z/
-      arr = [$1, $2, $3, $3, $5, $6].map {|i| i.to_i }
-      Date.new(*arr[0..2])
-      Time.mktime(*arr)
+      microsec = ($7.to_f * 1_000_000).to_i
+      Time.mktime($1.to_i, $2.to_i, $3.to_i, $3.to_i, $5.to_i, $6.to_i, microsec)
+    end
+  }
+
+  x.report('Time.parse - valid') {
+    n.times do
+      Time.parse("2000-01-04 12:12:12")
+    end
+  }
+
+  x.report('Time.parse - invalid ') {
+    n.times do
+      Time.parse("2000-01-32 12:12:12") rescue nil
     end
   }
 
   x.report('Date._parse - valid') {
     n.times do
-      Date._parse("2000-01-04 12:12:12")
+      hash = Date._parse("2000-01-04 12:12:12")
+      Time.mktime(hash[:year], hash[:mon], hash[:mday], hash[:hour], hash[:min], hash[:sec])
     end
   }
 
   x.report('Date._parse - invalid ') {
     n.times do
-      Date._parse("2000-01-32 12:12:12")
+      hash = Date._parse("2000-01-32 12:12:12")
+      Time.mktime(hash[:year], hash[:mon], hash[:mday], hash[:hour], hash[:min], hash[:sex]) rescue nil
     end
   }
 
