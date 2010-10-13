@@ -209,13 +209,18 @@ module Timeliness
         compile_formats
       end
 
-      # Removes formats where the 1 or 2 digit month comes first, to eliminate
-      # formats which are ambiguous with the European style of day then month.
-      # The mmm token is ignored as its not ambiguous.
+      # Removes US date formats so that ambigious dates are parsed as European format
       #
-      def remove_us_formats
+      def use_euro_formats
         @date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
         @datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
+      end
+
+      # Restores default to parse ambiguous dates as US format
+      #
+      def use_us_formats
+        @date_format_set     = FormatSet.compile(date_formats)
+        @datetime_format_set = FormatSet.compile(datetime_formats)
       end
 
       def compile_formats

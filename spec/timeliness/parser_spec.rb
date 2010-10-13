@@ -208,11 +208,23 @@ describe Timeliness::Parser do
     end
   end
 
-  context "remove_us_formats" do
+  context "use_euro_formats" do
     it "should allow ambiguous date to be parsed as European format" do
       parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
-      parser.remove_us_formats
+      parser.use_euro_formats
       parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
+    end
+  end
+
+  context "use_use_formats" do
+    before do
+      parser.use_euro_formats
+    end
+
+    it "should allow ambiguous date to be parsed as European format" do
+      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
+      parser.use_us_formats
+      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
     end
   end
 
