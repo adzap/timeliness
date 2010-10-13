@@ -136,7 +136,6 @@ module Timeliness
 
     class << self
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components
-      attr_reader :time_format_set, :date_format_set, :datetime_format_set
 
       def parse(value, type, options={})
         return value unless value.is_a?(String)
@@ -233,24 +232,28 @@ module Timeliness
     private
 
       # Returns format for type and other possible matching format set based on type
-      # and value length.
+      # and value length. Gives minor speed-up by checking string length.
       def format_set(type, string)
         case type
         when :date
-          [ date_format_set, datetime_format_set ]
+          [ @date_format_set, @datetime_format_set ]
         when :time
-          # gives a speed-up for time string as datetime
           if string.length < 11
-            [ time_format_set ]
+            [ @time_format_set ]
           else
-            [ datetime_format_set, time_format_set ]
+            [ @datetime_format_set, @time_format_set ]
           end
         when :datetime
-          # gives a speed-up for date string as datetime
           if string.length < 11
-            [ date_format_set, datetime_format_set ]
+            [ @date_format_set, @datetime_format_set ]
           else
-            [ datetime_format_set, date_format_set ]
+            [ @datetime_format_set, @date_format_set ]
+          end
+        else
+          if string.length < 11
+            [ @date_format_set, @time_format_set, @datetime_format_set ]
+          else
+            [ @datetime_format_set, @date_format_set, @time_format_set ]
           end
         end
       end
