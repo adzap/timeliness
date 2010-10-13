@@ -10,14 +10,14 @@ module Timeliness
   class << self
     extend Forwardable
     def_delegators Parser, :parse, :add_formats, :remove_formats, :use_us_formats, :use_euro_formats
-    attr_accessor :default_timezone, :dummy_date_for_time_type, :ambiguous_year_threshold
+    attr_accessor :default_timezone, :date_for_time_type, :ambiguous_year_threshold
   end
 
   # Default timezone (:local or :utc)
   @default_timezone = :local
 
-  # Set the dummy date part for a time type values.
-  @dummy_date_for_time_type = [ 2000, 1, 1 ]
+  # Set the default date part for a time type values.
+  @date_for_time_type = [ 2000, 1, 1 ]
 
   # Set the threshold value for a two digit year to be considered last century
   #

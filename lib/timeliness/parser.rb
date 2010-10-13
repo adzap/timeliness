@@ -146,7 +146,6 @@ module Timeliness
         if type == :date
           time_array[3..7] = nil
         elsif type == :time
-          time_array[0..2] = Timeliness.dummy_date_for_time_type
         end
         make_time(time_array[0..6], options[:zone])
       end
