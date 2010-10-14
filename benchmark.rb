@@ -13,6 +13,12 @@ Benchmark.bm do |x|
     end
   }
 
+  x.report('timeliness - datetime with :format') {
+    n.times do
+      Timeliness::Parser.parse("2000-01-04 12:12:12", :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+    end
+  }
+
   x.report('timeliness - date') {
     n.times do
       Timeliness::Parser.parse("2000-01-04", :date)
