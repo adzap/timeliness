@@ -242,6 +242,7 @@ module Timeliness
       end
 
     private
+      attr_reader :date_format_set, :time_format_set, :datetime_format_set
 
       def current_date(options)
         now = if options[:now]

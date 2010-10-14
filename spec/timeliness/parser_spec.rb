@@ -138,6 +138,21 @@ describe Timeliness::Parser do
         time_array = parser._parse('2000-02-01 12:13:14', :time, :strict => true)
         time_array.should be_nil
       end
+
+      it "should parse date string when type is date" do
+        time_array = parser._parse('2000-02-01', :date, :strict => true)
+        time_array.should_not be_nil
+      end
+
+      it "should parse time string when type is time" do
+        time_array = parser._parse('12:13:14', :time, :strict => true)
+        time_array.should_not be_nil
+      end
+
+      it "should parse datetime string when type is datetime" do
+        time_array = parser._parse('2000-02-01 12:13:14', :datetime, :strict => true)
+        time_array.should_not be_nil
+      end
     end
 
     it "should return nil if time hour is out of range for AM meridian" do
