@@ -30,12 +30,19 @@ describe Timeliness::Parser do
       parse('2010-02-01 12:13', :time).should == Time.local(2000,1,1,12,13)
     end
 
-    it "should return same Time object when passed a Time object" do
+    it "should return return same value if value not a string" do
       value = Time.now
       parse(value, :datetime).should == value
     end
 
-    describe "with :zone option" do
+    context "with :now option" do
+      it 'should use date parts if string does not specify' do
+        time = parse("12:13:14", :now => Time.local(2010,1,1))
+        time.should == Time.local(2010,1,1,12,13,14)
+      end
+    end
+
+    context "with :zone option" do
       context ":utc" do
         it "should return time object in utc timezone" do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :utc)
@@ -66,6 +73,34 @@ describe Timeliness::Parser do
       end
     end
 
+    describe "for time type" do
+      it 'should use date from date_for_time_type' do
+        parse('12:13:14', :time).should == Time.local(2000,1,1,12,13,14)
+      end
+
+      context "with :now option" do
+        it 'should use date from :now' do
+          parse('12:13:14', :time, :now => Time.local(2010, 6, 1)).should == Time.local(2010,6,1,12,13,14)
+        end
+      end
+
+      context "with :zone option" do
+        before(:all) do
+          Timecop.freeze(2010,1,1,0,0,0)
+        end
+
+        it "should use date from the specified zone" do
+          time = parse("12:13:14", :time, :zone => :utc)
+          time.year.should == 2009
+          time.month.should == 12
+          time.day.should == 31
+        end
+
+        after(:all) do
+          Timecop.return
+        end
+      end
+    end
   end
 
   context "_parse" do
