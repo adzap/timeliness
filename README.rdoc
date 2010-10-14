@@ -36,7 +36,7 @@ or specified with :now option:
 
   Timeliness.parse('12:13:14', :now => Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
 
-You can also provide a type which will tell the parser that you are only interested in the values for that type.
+You can also provide a type which will tell the parser that you are only interested in the part of the value for that type.
 
   Timeliness.parse('2010-09-08 12:13:14', :date)     #=> Wed Sep 08 00:00:00 1000 2010
   Timeliness.parse('2010-09-08 12:13:14', :time)     #=> Sat Jan 01 12:13:14 1100 2000
@@ -48,7 +48,7 @@ Now let's get strict. Pass the :strict option with true and things get finicky
   Timeliness.parse('2010-09-08 12:13:14', :time, :strict => true)     #=> nil
   Timeliness.parse('2010-09-08 12:13:14', :datetime, :strict => true) #=> Wed Sep 08 12:13:14 1000 2010 i.e. the whole string is used
 
-The strict option without a type is ignored.
+The date and time strings are not accepted for a datetime type. The strict option without a type is ignored.
 
 To control what zone the time object is returned in, you have two options. Firstly you can set the default zone. Below
 is the list of options with their effective time creation method call
@@ -166,7 +166,7 @@ Here is what each format token means:
 
 All other characters are considered literal. For the technically minded, these formats are compiled into a single regular expression
 
-To see all defined formats look at the {parser source code}[http://github.com/adzap/timeliness/tree/master/lib/timeliness/parser.rb].
+To see all defined formats look at the {source code}[http://github.com/adzap/timeliness/tree/master/lib/timeliness/formats.rb].
 
 
 == Settings
