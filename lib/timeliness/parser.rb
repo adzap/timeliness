@@ -137,8 +137,11 @@ module Timeliness
     class << self
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components
 
-      def parse(value, type=nil, options={})
+      def parse(value, *args)
         return value unless value.is_a?(String)
+
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        type = args.first
 
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
