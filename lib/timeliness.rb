@@ -18,7 +18,14 @@ module Timeliness
     alias :dummy_date_for_time_type :date_for_time_type
   end
 
-  # Default timezone (:local or :utc)
+  # Default timezone. Options:
+  #   - :local (default)
+  #   - :utc
+  #   
+  #   If ActiveSupport loaded, also
+  #   - :current
+  #   - 'Zone name'
+  #
   @default_timezone = :local
 
   # Set the default date part for a time type values.
