@@ -12,7 +12,10 @@ module Timeliness
     extend Forwardable
     def_delegators Parser, :parse, :_parse
     def_delegators Formats, :add_formats, :remove_formats, :use_us_formats, :use_euro_formats
+
     attr_accessor :default_timezone, :date_for_time_type, :ambiguous_year_threshold
+
+    alias :dummy_date_for_time_type :date_for_time_type
   end
 
   # Default timezone (:local or :utc)
