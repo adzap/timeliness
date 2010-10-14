@@ -60,8 +60,8 @@ describe Timeliness::Parser do
 
       context "named zone" do
         it "should return time object in the timezone" do
-          time = parse("2000-06-01 12:13:14", :datetime, :zone => 'Australia/Perth')
-          time.utc_offset.should == 8.hours
+          time = parse("2000-06-01 12:13:14", :datetime, :zone => 'London')
+          time.utc_offset.should == 1.hour
         end
       end
     end
@@ -223,8 +223,8 @@ describe Timeliness::Parser do
 
       context "named zone" do
         it "should return time object in the timezone" do
-          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], 'Perth')
-          time.utc_offset.should == 8.hours
+          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], 'London')
+          time.utc_offset.should == 1.hour
         end
       end
     end
@@ -263,16 +263,16 @@ describe Timeliness::Parser do
       end
 
       it 'should return date array for current zone' do
-        Time.zone = 'New York'
+        Time.zone = 'London'
         time = Time.current
         date_array = [time.year, time.month, time.day]
         current_date(:zone => :current).should == date_array
       end
 
-      it 'should return date array for current zone' do
-        time = Time.use_zone('New York') { Time.current }
+      it 'should return date array for named zone' do
+        time = Time.use_zone('London') { Time.current }
         date_array = [time.year, time.month, time.day]
-        current_date(:zone => 'New York').should == date_array
+        current_date(:zone => 'London').should == date_array
       end
     end
 
