@@ -11,7 +11,7 @@ Date/time parser for Ruby with the following features:
 * It's pretty fast. Up to 60% faster than Time/Date parse method.
 * Control the parser strictness.
 * Control behaviour of ambiguous date formats (US vs European e.g. mm/dd/yy, dd/mm/yy).
-* I18n support (for months).
+* I18n support (for months), if I18n gem loaded.
 * Fewer WTFs than Time/Date parse method.
 * Has no dependencies.
 
