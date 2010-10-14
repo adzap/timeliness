@@ -236,14 +236,14 @@ describe Timeliness::Parser do
     context "with zone value" do
       context ":utc" do
         it "should return time object in utc timezone" do
-          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], :utc)
+          time = parser.make_time([2000,6,1,12,0,0], :utc)
           time.utc_offset.should == 0
         end
       end
 
       context ":local" do
         it "should return time object in local system timezone" do
-          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], :local)
+          time = parser.make_time([2000,6,1,12,0,0], :local)
           time.utc_offset.should == 10.hours
         end
       end
@@ -251,14 +251,14 @@ describe Timeliness::Parser do
       context ":current" do
         it "should return time object in current timezone" do
           Time.zone = 'Adelaide'
-          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], :current)
+          time = parser.make_time([2000,6,1,12,0,0], :current)
           time.utc_offset.should == 9.5.hours
         end
       end
 
       context "named zone" do
         it "should return time object in the timezone" do
-          time = Timeliness::Parser.make_time([2000,6,1,12,0,0], 'London')
+          time = parser.make_time([2000,6,1,12,0,0], 'London')
           time.utc_offset.should == 1.hour
         end
       end
@@ -314,114 +314,5 @@ describe Timeliness::Parser do
     after(:all) do
       Timecop.return
     end
-  end
-
-  context "add_formats" do
-    before do
-      @formats = parser.time_formats.dup
-    end
-
-    it "should add format to format array" do
-      parser.add_formats(:time, "h o'clock")
-      parser.time_formats.should include("h o'clock")
-    end
-
-    it "should parse new format after its added" do
-      should_not_parse("12 o'clock", :time)
-      parser.add_formats(:time, "h o'clock")
-      should_parse("12 o'clock", :time)
-    end
-
-    it "should raise error if format exists" do
-      lambda { parser.add_formats(:time, "hh:nn:ss") }.should raise_error()
-    end
-
-    context "with :before option" do
-      it "should add new format with higher precedence" do
-        parser.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
-        time_array = parser._parse('59:23:58', :time)
-        time_array.should == [nil,nil,nil,23,58,59,nil]
-      end
-
-      it "should raise error if :before format does not exist" do
-        lambda { parser.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.should raise_error()
-      end
-    end
-
-    after do
-      parser.time_formats = @formats
-      parser.compile_formats
-    end
-  end
-
-  context "remove_formats" do
-    before do
-      @formats = parser.time_formats.dup
-    end
-
-    it "should remove format from format array" do
-      parser.remove_formats(:time, 'h.nn_ampm')
-      parser.time_formats.should_not include("h o'clock")
-    end
-
-    it "should remove multiple formats from format array" do
-      parser.remove_formats(:time, 'h.nn_ampm')
-      parser.time_formats.should_not include("h o'clock")
-    end
-
-    it "should not allow format to be parsed" do
-      should_parse('2.12am', :time)
-      parser.remove_formats(:time, 'h.nn_ampm')
-      should_not_parse('2.12am', :time)
-    end
-
-    it "should raise error if format does not exist" do
-      lambda { parser.remove_formats(:time, "ss:hh:nn") }.should raise_error()
-    end
-
-    after do
-      parser.time_formats = @formats
-      parser.compile_formats
-    end
-  end
-
-  context "use_euro_formats" do
-    it "should allow ambiguous date to be parsed as European format" do
-      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
-      parser.use_euro_formats
-      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
-    end
-  end
-
-  context "use_use_formats" do
-    before do
-      parser.use_euro_formats
-    end
-
-    it "should allow ambiguous date to be parsed as European format" do
-      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
-      parser.use_us_formats
-      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
-    end
-  end
-
-  def parser
-    Timeliness::Parser
-  end
-
-  def parse(*args)
-    Timeliness::Parser.parse(*args)
-  end
-
-  def current_date(options={})
-    parser.send(:current_date, options)
-  end
-
-  def should_parse(*args)
-    parser.parse(*args).should_not be_nil
-  end
-
-  def should_not_parse(*args)
-    parser.parse(*args).should be_nil
   end
 end

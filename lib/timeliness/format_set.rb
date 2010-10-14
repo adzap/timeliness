@@ -18,8 +18,8 @@ module Timeliness
         found_tokens, token_order, value_token_count = [], [], 0
 
         # Substitute tokens with numbered placeholder
-        Parser.sorted_token_keys.each do |token|
-          regexp_str, arg_key = *Parser.format_tokens[token]
+        Formats.sorted_token_keys.each do |token|
+          regexp_str, arg_key = *Formats.format_tokens[token]
           if format.gsub!(/#{token}/, "%<#{found_tokens.size}>")
             if arg_key
               regexp_str = "(#{regexp_str})"
@@ -50,7 +50,7 @@ module Timeliness
       def define_format_method(name, components)
         values = [nil] * 7
         components.each do |component|
-          position, code = *Parser.format_components[component]
+          position, code = *Formats.format_components[component]
           values[position] = code || "#{component}.to_i" if position
         end
         class_eval <<-DEF
