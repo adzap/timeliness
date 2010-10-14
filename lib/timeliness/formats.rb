@@ -194,17 +194,17 @@ module Timeliness
         case type
         when :date
           [ @date_format_set, @datetime_format_set ]
-        when :time
-          if string.length < 11
-            [ @time_format_set ]
-          else
-            [ @datetime_format_set, @time_format_set ]
-          end
         when :datetime
           if string.length < 11
             [ @date_format_set, @datetime_format_set ]
           else
             [ @datetime_format_set, @date_format_set ]
+          end
+        when :time
+          if string.length < 11
+            [ @time_format_set ]
+          else
+            [ @datetime_format_set, @time_format_set ]
           end
         else
           if string.length < 11

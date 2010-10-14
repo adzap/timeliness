@@ -12,11 +12,12 @@ module Timeliness
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
 
-        if type == :date
+        case type
+        when :date
           time_array[3..7] = nil
-        elsif type == :time
+        when :time
           time_array[0..2] = current_date(options)
-        elsif type.nil?
+        when nil
           dummy_date = current_date(options)
           time_array[0] ||= dummy_date[0]
           time_array[1] ||= dummy_date[1]
