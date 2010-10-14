@@ -1,11 +1,4 @@
 module Timeliness
-  # A date and time parsing library which allows you to add custom formats using
-  # simple predefined tokens. This makes it much easier to catalogue and customize
-  # the formats rather than dealing directly with regular expressions.
-  #
-  # Formats can be added or removed to customize the set of valid date or time
-  # string values.
-  #
   module Parser
 
     class << self
