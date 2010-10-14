@@ -163,7 +163,7 @@ module Timeliness
         compile_formats
       end
 
-      # Removes US date formats so that ambigious dates are parsed as European format
+      # Removes US date formats so that ambiguous dates are parsed as European format
       #
       def use_euro_formats
         @date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
