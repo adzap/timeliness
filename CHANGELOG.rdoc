@@ -1,0 +1,6 @@
+= 0.1.1 - 2010-10-14
+* Alias for validates_timeliness compatibility
+* Tiny cleanup
+
+= 0.1.0 - 2010-10-14
+* Initial release
