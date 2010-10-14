@@ -5,6 +5,7 @@ module Timeliness
     attr_reader :formats, :regexp
 
     class << self
+
       def compile(formats)
         set = new(formats)
         set.compile!
@@ -58,6 +59,7 @@ module Timeliness
           end
         DEF
       end
+
     end
 
     def initialize(formats)
