@@ -188,6 +188,11 @@ describe Timeliness::Parser do
         time_array = parser._parse('2000-02-01 12:13:14', :datetime, :strict => true)
         time_array.should_not be_nil
       end
+
+      it "should ignore strict parsing if no type specified" do
+        time_array = parser._parse('2000-02-01', :strict => true)
+        time_array.should_not be_nil
+      end
     end
 
     it "should return nil if time hour is out of range for AM meridian" do

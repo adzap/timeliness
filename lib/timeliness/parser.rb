@@ -48,7 +48,7 @@ module Timeliness
       end
 
       def _parse(string, type=nil, options={})
-        if options[:strict]
+        if options[:strict] && type
           set = Formats.send("#{type}_format_set")
           set.match(string, options[:format])
         else
