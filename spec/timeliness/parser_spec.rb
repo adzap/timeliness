@@ -238,6 +238,37 @@ describe Timeliness::Parser do
   end
 
   describe "make_time" do
+    it "should return time object for valid time array" do
+      time = parser.make_time([2010,9,8,12,13,14])
+      time.should == Time.local(2010,9,8,12,13,14)
+    end
+
+    it "should return nil for invalid date in array" do
+      time = parser.make_time([2010,13,8,12,13,14])
+      time.should be_nil
+    end
+
+    it "should return nil for invalid time in array" do
+      time = parser.make_time([2010,9,8,25,13,14])
+      time.should be_nil
+    end
+
+    context "default timezone" do
+      before do
+        @default_timezone = Timeliness.default_timezone
+      end
+
+      it "should be used if no zone value" do
+        Timeliness.default_timezone = :utc
+        time = parser.make_time([2000,6,1,12,0,0])
+        time.utc_offset.should == 0
+      end
+
+      after do
+       Timeliness.default_timezone = @default_timezone
+      end
+    end
+
     context "with zone value" do
       context ":utc" do
         it "should return time object in utc timezone" do

@@ -35,9 +35,10 @@ module Timeliness
       def make_time(time_array, zone=nil)
         return nil unless fast_date_valid_with_fallback(*time_array[0..2])
 
+        zone ||= Timeliness.default_timezone
         case zone
-        when nil, :utc, :local
-          time_with_datetime_fallback(zone || Timeliness.default_timezone, *time_array.compact)
+        when :utc, :local
+          time_with_datetime_fallback(zone, *time_array.compact)
         when :current
           Time.zone.local(*time_array)
         else
