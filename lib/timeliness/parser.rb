@@ -68,7 +68,7 @@ module Timeliness
         elsif options[:zone]
           case options[:zone]
           when :utc, :local
-            Time.now.send("get#{options[:zone] || Timeliness.default_timezone}")
+            Time.now.send("get#{options[:zone]}")
           when :current
             Time.current
           else
