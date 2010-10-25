@@ -71,6 +71,15 @@ describe Timeliness::Parser do
           time.utc_offset.should == 1.hour
         end
       end
+
+      context "without ActiveSupport loaded" do
+        it 'should output message' do
+          lambda {
+            Time.should_receive(:use_zone).and_raise(NoMethodError)
+            time = parse("2000-06-01 12:13:14", :datetime, :zone => 'London')
+          }.should raise_error(Timeliness::Parser::MissingTimezoneSupport)
+        end
+      end
     end
 
     describe "for time type" do

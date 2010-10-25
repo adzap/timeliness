@@ -1,5 +1,6 @@
 module Timeliness
   module Parser
+    class MissingTimezoneSupport < StandardError; end
 
     class << self
 
@@ -40,6 +41,8 @@ module Timeliness
         end
       rescue ArgumentError, TypeError
         nil
+      rescue NoMethodError
+        raise MissingTimezoneSupport, "You need to load ActiveSupport to use timezones other than :utc and :local."
       end
 
       def _parse(string, type=nil, options={})
