@@ -45,17 +45,18 @@ describe Timeliness::Formats do
       @default_formats = formats.time_formats.dup
     end
 
-    it "should remove format from format array" do
+    it "should remove a single format from the formats array for type" do
       formats.remove_formats(:time, 'h.nn_ampm')
-      formats.time_formats.should_not include("h o'clock")
+      formats.time_formats.should_not include('h.nn_ampm')
     end
 
-    it "should remove multiple formats from format array" do
-      formats.remove_formats(:time, 'h.nn_ampm')
-      formats.time_formats.should_not include("h o'clock")
+    it "should remove multiple formats from formats array for type" do
+      formats.remove_formats(:time, 'h:nn', 'h.nn_ampm')
+      formats.time_formats.should_not include('h:nn')
+      formats.time_formats.should_not include('h.nn_ampm')
     end
 
-    it "should not allow format to be parsed" do
+    it "should prevent parsing of removed format" do
       should_parse('2.12am', :time)
       formats.remove_formats(:time, 'h.nn_ampm')
       should_not_parse('2.12am', :time)
