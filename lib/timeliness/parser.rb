@@ -69,9 +69,10 @@ module Timeliness
           else
             Time.use_zone(options[:zone]) { Time.current }
           end
+        else
+          Timeliness.date_for_time_type
         end
-        now ||= Timeliness.date_for_time_type
-        now.is_a?(Array) ? now[0..2] : Array(now).reverse[4..6]
+        now.is_a?(Array) ? now[0..2] : [now.year, now.month, now.day]
       end
 
       # Taken from ActiveSupport and simplified
