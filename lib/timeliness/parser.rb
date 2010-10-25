@@ -25,6 +25,9 @@ module Timeliness
           time_array[2] ||= dummy_date[2]
         end
         make_time(time_array[0..6], options[:zone])
+      rescue NoMethodError => ex
+        raise ex unless ex.message =~ /zone/
+        raise MissingTimezoneSupport, "ActiveSupport must be loaded to use timezones other than :utc and :local."
       end
 
       def make_time(time_array, zone=nil)
@@ -41,8 +44,6 @@ module Timeliness
         end
       rescue ArgumentError, TypeError
         nil
-      rescue NoMethodError
-        raise MissingTimezoneSupport, "You need to load ActiveSupport to use timezones other than :utc and :local."
       end
 
       def _parse(string, type=nil, options={})
