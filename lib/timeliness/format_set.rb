@@ -66,6 +66,10 @@ module Timeliness
       @formats = formats
     end
 
+    # Compiles the formats into one big regexp. Stores the index of where
+    # each format's capture values begin in the match data. Each individual
+    # format regpexp is also stored for use with the parse :format option.
+    #
     def compile!
       regexp_string   = ''
       @format_regexps = {}
