@@ -48,7 +48,7 @@ module Timeliness
       # values placed in the position defined by the component.
       #
       def define_format_method(name, components)
-        values = [nil] * 7
+        values = [nil] * 8
         components.each do |component|
           position, code = *Formats.format_components[component]
           values[position] = code || "#{component}.to_i" if position

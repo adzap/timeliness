@@ -116,54 +116,54 @@ describe Timeliness::Parser do
     context "with type" do
       it "should return date array from date string" do
         time_array = parser._parse('2000-02-01', :date)
-        time_array.should == [2000,2,1,nil,nil,nil,nil]
+        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
       end
 
       it "should return time array from time string" do
         time_array = parser._parse('12:13:14', :time)
-        time_array.should == [nil,nil,nil,12,13,14,nil]
+        time_array.should == [nil,nil,nil,12,13,14,nil,nil]
       end
 
       it "should return datetime array from datetime string" do
         time_array = parser._parse('2000-02-01 12:13:14', :datetime)
-        time_array.should == [2000,2,1,12,13,14,nil]
+        time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
 
       it "should return date array from date string when type is datetime" do
         time_array = parser._parse('2000-02-01', :datetime)
-        time_array.should == [2000,2,1,nil,nil,nil,nil]
+        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
       end
 
       it "should return datetime array from datetime string when type is date" do
         time_array = parser._parse('2000-02-01 12:13:14', :date)
-        time_array.should == [2000,2,1,12,13,14,nil]
+        time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
     end
 
     context "with no type" do
       it "should return date array from date string" do
         time_array = parser._parse('2000-02-01')
-        time_array.should == [2000,2,1,nil,nil,nil,nil]
+        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
       end
 
       it "should return time array from time string" do
         time_array = parser._parse('12:13:14', :time)
-        time_array.should == [nil,nil,nil,12,13,14,nil]
+        time_array.should == [nil,nil,nil,12,13,14,nil,nil]
       end
 
       it "should return datetime array from datetime string" do
         time_array = parser._parse('2000-02-01 12:13:14')
-        time_array.should == [2000,2,1,12,13,14,nil]
+        time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
 
       it "should return date array from date string when type is datetime" do
         time_array = parser._parse('2000-02-01')
-        time_array.should == [2000,2,1,nil,nil,nil,nil]
+        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
       end
 
       it "should return datetime array from datetime string when type is date" do
         time_array = parser._parse('2000-02-01 12:13:14')
-        time_array.should == [2000,2,1,12,13,14,nil]
+        time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
     end
 
@@ -214,7 +214,7 @@ describe Timeliness::Parser do
     context "with :format option" do
       it "should return values if string matches specified format" do
         time_array = parser._parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
-        time_array.should == [2000,2,1,12,13,14,nil]
+        time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
 
       it "should return nil if string does not match specified format" do
@@ -226,21 +226,21 @@ describe Timeliness::Parser do
     context "date with ambiguous year" do
       it "should return year in current century if year below threshold" do
         time_array = parser._parse('01-02-29', :date)
-        time_array.should == [2029,2,1,nil,nil,nil,nil]
+        time_array.should == [2029,2,1,nil,nil,nil,nil,nil]
       end
 
       it "should return year in last century if year at or above threshold" do
         time_array = parser._parse('01-02-30', :date)
-        time_array.should == [1930,2,1,nil,nil,nil,nil]
+        time_array.should == [1930,2,1,nil,nil,nil,nil,nil]
       end
 
       it "should allow custom threshold" do
         default = Timeliness.ambiguous_year_threshold
         Timeliness.ambiguous_year_threshold = 40
         time_array = parser._parse('01-02-39', :date)
-        time_array.should == [2039,2,1,nil,nil,nil,nil]
+        time_array.should == [2039,2,1,nil,nil,nil,nil,nil]
         time_array = parser._parse('01-02-40', :date)
-        time_array.should == [1940,2,1,nil,nil,nil,nil]
+        time_array.should == [1940,2,1,nil,nil,nil,nil,nil]
         Timeliness.ambiguous_year_threshold = default
       end
     end

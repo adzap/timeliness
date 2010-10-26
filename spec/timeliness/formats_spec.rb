@@ -26,7 +26,7 @@ describe Timeliness::Formats do
       it "should add new format with higher precedence" do
         formats.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
         time_array = parser._parse('59:23:58', :time)
-        time_array.should == [nil,nil,nil,23,58,59,nil]
+        time_array.should == [nil,nil,nil,23,58,59,nil,nil]
       end
 
       it "should raise error if :before format does not exist" do
@@ -74,9 +74,9 @@ describe Timeliness::Formats do
 
   context "use_euro_formats" do
     it "should allow ambiguous date to be parsed as European format" do
-      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil,nil]
       formats.use_euro_formats
-      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil,nil]
     end
   end
 
@@ -86,9 +86,9 @@ describe Timeliness::Formats do
     end
 
     it "should allow ambiguous date to be parsed as European format" do
-      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil,nil]
       formats.use_us_formats
-      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil,nil]
     end
   end
 end

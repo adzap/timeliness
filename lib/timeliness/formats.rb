@@ -100,7 +100,7 @@ module Timeliness
       'u'    => [ '\d{1,6}', :usec ],
       'ampm' => [ '[aApP]\.?[mM]\.?', :meridian ],
       'zo'   => [ '[+-]\d{2}:?\d{2}', :offset ],
-      'tz'   => [ '[A-Z]{1,4}' ],
+      'tz'   => [ '[A-Z]{1,4}', :zone ],
       '_'    => [ '\s?' ]
     }
 
@@ -122,6 +122,7 @@ module Timeliness
       :sec      => [ 5 ],
       :usec     => [ 6, 'microseconds(usec)'],
       :offset   => [ 7, 'offset_in_seconds(offset)'],
+      :zone     => [ 7, 'zone'],
       :meridian => [ nil ]
     }
 
