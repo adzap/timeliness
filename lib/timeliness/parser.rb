@@ -13,17 +13,7 @@ module Timeliness
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
 
-        case type
-        when :date
-          time_array[3..7] = nil
-        when :time
-          time_array[0..2] = current_date(options)
-        when nil
-          dummy_date = current_date(options)
-          time_array[0] ||= dummy_date[0]
-          time_array[1] ||= dummy_date[1]
-          time_array[2] ||= dummy_date[2]
-        end
+        override_values_by_type(time_array, type, options) unless type == :datetime
         make_time(time_array[0..6], options[:zone])
       rescue NoMethodError => ex
         raise ex unless ex.message =~ /zone/
@@ -61,22 +51,40 @@ module Timeliness
 
       private
 
+      def override_values_by_type(values, type, options)
+        case type
+        when :date
+          values[3..7] = nil
+        when :time
+          values[0..2] = current_date(options)
+        when nil
+          dummy_date = current_date(options)
+          values[0] ||= dummy_date[0]
+          values[1] ||= dummy_date[1]
+          values[2] ||= dummy_date[2]
+        end
+      end
+
       def current_date(options)
         now = if options[:now]
           options[:now]
         elsif options[:zone]
-          case options[:zone]
-          when :utc, :local
-            Time.now.send("get#{options[:zone]}")
-          when :current
-            Time.current
-          else
-            Time.use_zone(options[:zone]) { Time.current }
-          end
+          current_time_in_zone(options[:zone])
         else
           Timeliness.date_for_time_type
         end
         now.is_a?(Array) ? now[0..2] : [now.year, now.month, now.day]
+      end
+
+      def current_time_in_zone(zone)
+        case zone
+        when :utc, :local
+          Time.now.send("get#{zone}")
+        when :current
+          Time.current
+        else
+          Time.use_zone(zone) { Time.current }
+        end
       end
 
       # Taken from ActiveSupport and simplified
