@@ -14,9 +14,11 @@ Date/time parser for Ruby with the following features:
 * I18n support (for months), if I18n gem loaded.
 * Fewer WTFs than Time/Date parse method.
 * Has no dependencies.
+* Works with Ruby MRI 1.8.*, 1.9.2, Rubinius
 
 Extracted from my {validates_timeliness gem}[http://github.com/adzap/validates_timeliness], it has been rewritten cleaner and much faster. It's most suitable for when
-you need to control the parsing behaviour. It's faster than the Time/Date class parse methods, so it has general appeal.
+you need to control the parsing behaviour. It's faster than the Time/Date class parse methods, so it
+has general appeal.
 
 
 == Usage
@@ -27,16 +29,11 @@ The simplest example is just a straight forward string parse:
   Timeliness.parse('2010-09-08')          #=> Wed Sep 08 00:00:00 1000 2010
   Timeliness.parse('12:13:14')            #=> Sat Jan 01 12:13:14 1100 2000
 
-Notice a time only string will return with a date value. The date value can be configured globally with
-this setting:
 
-  Timeliness.date_for_time_type = [2010, 1, 1]
+=== Specify a Type
 
-or specified with :now option:
-
-  Timeliness.parse('12:13:14', :now => Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
-
-You can also provide a type which will tell the parser that you are only interested in the part of the value for that type.
+You can provide a type which will tell the parser that you are only interested in the part of
+the value for that type.
 
   Timeliness.parse('2010-09-08 12:13:14', :date)     #=> Wed Sep 08 00:00:00 1000 2010
   Timeliness.parse('2010-09-08 12:13:14', :time)     #=> Sat Jan 01 12:13:14 1100 2000
@@ -48,15 +45,35 @@ Now let's get strict. Pass the :strict option with true and things get finicky
   Timeliness.parse('2010-09-08 12:13:14', :time, :strict => true)     #=> nil
   Timeliness.parse('2010-09-08 12:13:14', :datetime, :strict => true) #=> Wed Sep 08 12:13:14 1000 2010 i.e. the whole string is used
 
-The date and time strings are not accepted for a datetime type. The strict option without a type is ignored.
+The date and time strings are not accepted for a datetime type. The strict option without a type is
+ignored.
 
-To control what zone the time object is returned in, you have two options. Firstly you can set the default zone. Below
-is the list of options with their effective time creation method call
+
+=== Specify the Current Date
+
+Notice a time only string will return with a date value. The date value can be configured globally 
+with this setting:
+
+  Timeliness.date_for_time_type = [2010, 1, 1]
+
+or using a lambda thats evaluated when parsed
+
+  Timeliness.date_for_time_type = lambda { Time.now } 
+
+It can also be specified with :now option:
+
+  Timeliness.parse('12:13:14', :now => Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
+
+
+=== Timezone
+
+To control what zone the time object is returned in, you have two options. Firstly you can set the
+default zone. Below is the list of options with their effective time creation method call
 
   Timeliness.default_timezone = :local      # Time.local(...)
   Timeliness.default_timezone = :utc        # Time.utc(...)
-  Timeliness.default_timezone = :current    # Time.zone.local(...)
-  Timeliness.default_timezone = 'Melbourne' # Time.use_zone('Melbourne') { Time.zone.local(...) }
+  Timeliness.default_timezone = :current    # Time.zone.local(...). Use current zone.
+  Timeliness.default_timezone = 'Melbourne' # Time.use_zone('Melbourne') { Time.zone.local(...) }. Doesn't change Time.zone.
 
 The last two options require that you have ActiveSupport timezone extension loaded.
 
@@ -69,25 +86,32 @@ You can also use the :zone option to control it for a single parse call:
 
 Remember, you must have ActiveSupport timezone extension loaded to use the last two examples.
 
+
+=== Restrict to Format
+
 To get super finicky, you can restrict the parsing to a single format with the :format option
 
   Timeliness.parse('2010-09-08 12:13:14', :format => 'yyyy-mm-dd hh:nn:ss')  #=> Wed Sep 08 12:13:14 UTC 2010
   Timeliness.parse('08/09/2010 12:13:14', :format => 'yyyy-mm-dd hh:nn:ss')  #=> nil
 
+
+=== Raw Parsed Values
+
 If you would like to get the raw array of values before the time object is created, you can with
 
-  Timeliness._parse('2010-09-08 12:13:14') # => [2010, 9, 8, 12, 13, 14, nil]
+  Timeliness._parse('2010-09-08 12:13:14') # => [2010, 9, 8, 12, 13, 14, nil, nil]
 
-The last nil is for the empty value of microseconds.
+The last two nils are for the empty value of microseconds, and timezone or offset.
 
 
 == Formats
 
-The gem has default formats included which can be easily added to using the format syntax. Also formats can be easily
-removed so that they are no longer considered valid.
+The gem has default formats included which can be easily added to using the format syntax. Also 
+formats can be easily removed so that they are no longer considered valid.
 
-Below are the default formats. If you think they are easy to read then you will be happy to know that is exactly the same
-format syntax you can use to define your own. No complex regular expressions are needed.
+Below are the default formats. If you think they are easy to read then you will be happy to know
+that is exactly the same format syntax you can use to define your own. No complex regular
+expressions are needed.
 
 
 === Datetime formats
@@ -164,7 +188,8 @@ Here is what each format token means:
      ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
        u = microseconds matches 1 to 3 digits
 
-All other characters are considered literal. For the technically minded, these formats are compiled into a single regular expression
+All other characters are considered literal. For the technically minded, these formats are compiled
+into a single regular expression
 
 To see all defined formats look at the {source code}[http://github.com/adzap/timeliness/tree/master/lib/timeliness/formats.rb].
 
@@ -173,9 +198,9 @@ To see all defined formats look at the {source code}[http://github.com/adzap/tim
 
 === US/Euro Formats
 
-The perennial problem for non-US developers or applications not primarily for the
-US, is the US date format of m/d/yy. This is ambiguous with the European format
-of d/m/yy. By default the gem uses the US formats as this is the Ruby default
+The perennial problem for non-US developers or applications not primarily for the US, is the US date
+format of m/d/yy. This is ambiguous with the European format of d/m/yy. By default the gem uses the
+US formats as this is the Ruby default
 when it does date interpretation.
 
 To switch to using the European (or Rest of The World) formats use this setting
@@ -191,8 +216,8 @@ You can switch back to US formats with
 
 === Customising Formats
 
-Sometimes you may not want certain formats to be valid. You can remove formats for each type and 
-the parser will then not consider that a valid format. To remove a format
+Sometimes you may not want certain formats to be valid. You can remove formats for each type and the
+parser will then not consider that a valid format. To remove a format
 
   Timeliness.remove_formats(:date, 'm\d\yy')
 
@@ -202,27 +227,25 @@ Adding new formats is also simple
 
 Now "10 o'clock" will be a valid value.
 
-You can embed regular expressions in the format but no guarantees that it will
-remain intact. If you avoid the use of any token characters, and regexp dots or
-backslashes as special characters in the regexp, it may work as expected.
-For special characters use POSIX character classes for safety. See the ISO 8601
-datetime for an example of an embedded regular expression.
+You can embed regular expressions in the format but no guarantees that it will remain intact. If
+you avoid the use of any token characters, and regexp dots or backslashes as special characters in
+the regexp, it may work as expected.  For special characters use POSIX character classes for safety.
+See the ISO 8601 datetime for an example of an embedded regular expression.
 
-Because formats are evaluated in order, adding a format which may be ambiguous
-with an existing format, will mean your format is ignored. If you need to make
-your new format higher precedence than an existing format, you can include the
-before option like so
+Because formats are evaluated in order, adding a format which may be ambiguous with an existing
+format, will mean your format is ignored. If you need to make your new format higher precedence than
+an existing format, you can include the before option like so
 
   Timeliness.add_formats(:time, 'ss:nn:hh', :before => 'hh:nn:ss')
 
-Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves
-you adding a new one and deleting an old one to get it to work.
+Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves you adding a new one
+and deleting an old one to get it to work.
 
 
 === Ambiguous Year
 
-When dealing with 2 digit year values, by default a year is interpreted as being
-in the last century when at or above 30. You can customize this however
+When dealing with 2 digit year values, by default a year is interpreted as being in the last century
+when at or above 30. You can customize this however
 
   Timeliness.ambiguous_year_threshold = 20
 
