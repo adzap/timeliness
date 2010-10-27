@@ -1,3 +1,10 @@
+= 0.2.0 - 2010-10-27
+* Allow a lambda for date_for_time_type which is evaluated on parse
+* Return the offset or zone in array from _parse
+* Give a nicer error message if use a zone and ActiveSupport is not loaded.
+* Removed some aliases used in validates_timeliness and are no longer needed.
+* Some minor spec fixes
+
 = 0.1.1 - 2010-10-14
 * Alias for validates_timeliness compatibility
 * Tiny cleanup
