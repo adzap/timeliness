@@ -83,8 +83,24 @@ describe Timeliness::Parser do
     end
 
     describe "for time type" do
-      it 'should use date from date_for_time_type' do
-        parse('12:13:14', :time).should == Time.local(2000,1,1,12,13,14)
+      context "with date from date_for_time_type" do
+        before do
+          @original = Timeliness.date_for_time_type
+        end
+
+        it 'should return date array' do
+          Timeliness.date_for_time_type = [2010,1,1]
+          parse('12:13:14', :time).should == Time.local(2010,1,1,12,13,14)
+        end
+
+        it 'should return date array evaluated lambda' do
+          Timeliness.date_for_time_type = lambda { Time.local(2010,2,1) }
+          parse('12:13:14', :time).should == Time.local(2010,2,1,12,13,14)
+        end
+
+        after do
+          Timeliness.date_for_time_type = @original
+        end
       end
 
       context "with :now option" do

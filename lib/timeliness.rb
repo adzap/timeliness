@@ -28,6 +28,16 @@ module Timeliness
   # Set the default date part for a time type values.
   @date_for_time_type = [ 2000, 1, 1 ]
 
+  def self.date_for_time_type
+    case @date_for_time_type
+    when Array
+      @date_for_time_type
+    when Proc
+      v = @date_for_time_type.call
+      [v.year, v.month, v.day]
+    end
+  end
+
   # Set the threshold value for a two digit year to be considered last century
   #
   # Default: 30
