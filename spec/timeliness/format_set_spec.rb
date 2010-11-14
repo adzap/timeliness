@@ -1,37 +1,37 @@
 require 'spec_helper'
 
 describe Timeliness::FormatSet do
-  context ".define_format_method" do
+  context "#process" do
     it "should define method which outputs date array with values in correct order" do
-      define_method_for('yyyy-mm-dd').call('2000', '1', '2').should == [2000,1,2,nil,nil,nil,nil,nil]
+      format_for('yyyy-mm-dd').process('2000', '1', '2').should == [2000,1,2,nil,nil,nil,nil,nil]
     end
 
     it "should define method which outputs date array from format with different order" do
-      define_method_for('dd/mm/yyyy').call('2', '1', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
+      format_for('dd/mm/yyyy').process('2', '1', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
     end
 
     it "should define method which outputs time array" do
-      define_method_for('hh:nn:ss').call('01', '02', '03').should == [nil,nil,nil,1,2,3,nil,nil]
+      format_for('hh:nn:ss').process('01', '02', '03').should == [nil,nil,nil,1,2,3,nil,nil]
     end
 
     it "should define method which outputs time array with meridian 'pm' adjusted hour" do
-      define_method_for('hh:nn:ss ampm').call('01', '02', '03', 'pm').should == [nil,nil,nil,13,2,3,nil,nil]
+      format_for('hh:nn:ss ampm').process('01', '02', '03', 'pm').should == [nil,nil,nil,13,2,3,nil,nil]
     end
 
     it "should define method which outputs time array with meridian 'am' unadjusted hour" do
-      define_method_for('hh:nn:ss ampm').call('01', '02', '03', 'am').should == [nil,nil,nil,1,2,3,nil,nil]
+      format_for('hh:nn:ss ampm').process('01', '02', '03', 'am').should == [nil,nil,nil,1,2,3,nil,nil]
     end
 
     it "should define method which outputs time array with microseconds" do
-      define_method_for('hh:nn:ss.u').call('01', '02', '03', '99').should == [nil,nil,nil,1,2,3,990000,nil]
+      format_for('hh:nn:ss.u').process('01', '02', '03', '99').should == [nil,nil,nil,1,2,3,990000,nil]
     end
 
     it "should define method which outputs datetime array with zone offset" do
-      define_method_for('yyyy-mm-dd hh:nn:ss.u zo').call('2001', '02', '03', '04', '05', '06', '99', '+10:00').should == [2001,2,3,4,5,6,990000,36000]
+      format_for('yyyy-mm-dd hh:nn:ss.u zo').process('2001', '02', '03', '04', '05', '06', '99', '+10:00').should == [2001,2,3,4,5,6,990000,36000]
     end
 
     it "should define method which outputs datetime array with timezone string" do
-      define_method_for('yyyy-mm-dd hh:nn:ss.u tz').call('2001', '02', '03', '04', '05', '06', '99', 'EST').should == [2001,2,3,4,5,6,990000,'EST']
+      format_for('yyyy-mm-dd hh:nn:ss.u tz').process('2001', '02', '03', '04', '05', '06', '99', 'EST').should == [2001,2,3,4,5,6,990000,'EST']
     end
   end
 
@@ -99,8 +99,8 @@ describe Timeliness::FormatSet do
 
   end
 
-  def define_method_for(format)
-    Timeliness::FormatSet.compile([format]).method(:"format_#{format}")
+  def format_for(format)
+    Timeliness::Format.new(format).compile!
   end
 
   def compile_regexp(format)

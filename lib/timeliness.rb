@@ -3,6 +3,7 @@ require 'forwardable'
 
 require 'timeliness/helpers'
 require 'timeliness/definitions'
+require 'timeliness/format'
 require 'timeliness/format_set'
 require 'timeliness/parser'
 require 'timeliness/version'
