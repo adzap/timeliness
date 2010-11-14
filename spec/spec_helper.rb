@@ -9,8 +9,8 @@ module TimelinessHelpers
     Timeliness::Parser
   end
 
-  def formats
-    Timeliness::Formats
+  def definitions
+    Timeliness::Definitions
   end
 
   def parse(*args)

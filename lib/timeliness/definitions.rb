@@ -1,5 +1,5 @@
 module Timeliness
-  module Formats
+  module Definitions
 
     # Format tokens:
     #       y = year
@@ -217,6 +217,5 @@ module Timeliness
       end
 
     end
-
   end
 end

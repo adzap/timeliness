@@ -38,11 +38,11 @@ module Timeliness
 
       def _parse(string, type=nil, options={})
         if options[:strict] && type
-          set = Formats.send("#{type}_format_set")
+          set = Definitions.send("#{type}_format_set")
           set.match(string, options[:format])
         else
           values = nil
-          Formats.format_set(type, string).find {|set| values = set.match(string, options[:format]) }
+          Definitions.format_set(type, string).find {|set| values = set.match(string, options[:format]) }
           values
         end
       rescue
