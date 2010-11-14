@@ -74,26 +74,24 @@ describe Timeliness::FormatSet do
   end
 
   context "#match" do
+    let(:set) { Timeliness::FormatSet.compile(['yyyy-mm-dd', 'dd/mm/yyyy']) }
+
     it 'should return array if string matches a format in set' do
-      compile_set('yyyy-mm-dd', 'dd/mm/yyyy').match('2000-01-02').should be_kind_of(Array)
+      set.match('2000-01-02').should be_kind_of(Array)
     end
 
     it 'should return nil if string does not matches a format in set' do
-      compile_set('yyyy-mm-dd', 'dd/mm/yyyy').match('2nd Feb 2000').should be_nil
+      set.match('2nd Feb 2000').should be_nil
     end
 
     it 'should only use specific format string for match if provided' do
-      compile_set('yyyy-mm-dd', 'dd/mm/yyyy').match('2000-01-02', 'yyyy-mm-dd').should be_kind_of(Array)
-      compile_set('yyyy-mm-dd', 'dd/mm/yyyy').match('2000-01-02', 'dd/mm/yyyy').should be_nil
+      set.match('2000-01-02', 'yyyy-mm-dd').should be_kind_of(Array)
+      set.match('2000-01-02', 'dd/mm/yyyy').should be_nil
     end
   end
 
   def compile_regexp(format)
     Timeliness::FormatSet.compile([format]).regexp
-  end
-
-  def compile_set(*formats)
-    Timeliness::FormatSet.compile(formats)
   end
 
 end
