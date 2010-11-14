@@ -191,7 +191,7 @@ module Timeliness
 
       # Returns format for type and other possible matching format set based on type
       # and value length. Gives minor speed-up by checking string length.
-      def format_set(type, string)
+      def format_sets(type, string)
         case type
         when :date
           [ @date_format_set, @datetime_format_set ]
