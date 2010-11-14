@@ -13,7 +13,7 @@ module Timeliness
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
 
-        override_values_by_type(time_array, type, options) unless type == :datetime
+        set_values_by_type(time_array, type, options) unless type == :datetime
         make_time(time_array[0..6], options[:zone])
       rescue NoMethodError => ex
         raise ex unless ex.message =~ /zone/
@@ -51,7 +51,7 @@ module Timeliness
 
       private
 
-      def override_values_by_type(values, type, options)
+      def set_values_by_type(values, type, options)
         case type
         when :date
           values[3..7] = nil

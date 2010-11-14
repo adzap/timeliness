@@ -2,37 +2,75 @@ require 'spec_helper'
 
 describe Timeliness::Parser do
   context "parse" do
-    it "should return time object for valid time string" do
-      parse("2000-01-01 12:13:14", :datetime).should be_kind_of(Time)
+    it "should return time object for valid datetime string" do
+      parse("2000-01-01 12:13:14").should be_kind_of(Time)
     end
 
-    it "should return nil for datetime string with invalid date part" do
-      should_not_parse("2000-02-30 12:13:14", :datetime)
+    it "should return nil for empty string" do
+      parse("").should be_nil
     end
 
-    it "should return nil for datetime string with invalid time part" do
-      should_not_parse("2000-02-01 25:13:14", :datetime)
-    end
-
-    it "should return nil for invalid date string" do
-      should_not_parse("2000-02-30", :date)
-    end
-
-    it "should return nil for invalid time string" do
-      should_not_parse("25:00:00", :time)
-    end
-
-    it "should ignore time in datetime string for date type" do
-      parse('2000-02-01 12:13', :date).should == Time.local(2000,2,1)
-    end
-
-    it "should ignore date in datetime string for time type" do
-      parse('2010-02-01 12:13', :time).should == Time.local(2000,1,1,12,13)
+    it "should return nil for nil value" do
+      parse(nil).should be_nil
     end
 
     it "should return return same value if value not a string" do
       value = Time.now
-      parse(value, :datetime).should == value
+      parse(value).should == value
+    end
+
+    it "should return time object for valid date string" do
+      parse("2000-01-01").should be_kind_of(Time)
+    end
+
+    it "should return nil for invalid date string" do
+      should_not_parse("2000-02-30")
+    end
+
+    it "should return time object for valid time string" do
+      parse("12:13:14").should be_kind_of(Time)
+    end
+
+    it "should return nil for invalid time string" do
+      should_not_parse("25:00:00")
+    end
+
+    it "should return nil for datetime string with invalid date part" do
+      should_not_parse("2000-02-30 12:13:14")
+    end
+
+    it "should return nil for datetime string with invalid time part" do
+      should_not_parse("2000-02-01 25:13:14")
+    end
+
+    context "with :datetime type" do
+      it "should return time object for valid datetime string" do
+        parse("2000-01-01 12:13:14", :datetime).should == Time.local(2000,1,1,12,13,14)
+      end
+    end
+
+    context "with :date type" do
+      it "should return time object for valid date string" do
+        parse("2000-01-01", :date).should == Time.local(2000,1,1)
+      end
+
+      it "should ignore time in datetime string" do
+        parse('2000-02-01 12:13', :date).should == Time.local(2000,2,1)
+      end
+    end
+
+    context "with :time type" do
+      it "should return time object with a dummy date values" do
+        parse('12:13', :time).should == Time.local(2000,1,1,12,13)
+      end
+
+      it "should ignore date in datetime string" do
+        parse('2010-02-01 12:13', :time).should == Time.local(2000,1,1,12,13)
+      end
+
+      it "should return nil if time hour is out of range for AM meridian" do
+        should_not_parse('13:14 am', :time)
+      end
     end
 
     context "with :now option" do
@@ -140,9 +178,14 @@ describe Timeliness::Parser do
         time_array.should == [nil,nil,nil,12,13,14,nil,nil]
       end
 
-      it "should return datetime array from datetime string" do
+      it "should return datetime values from datetime string" do
         time_array = parser._parse('2000-02-01 12:13:14', :datetime)
         time_array.should == [2000,2,1,12,13,14,nil,nil]
+      end
+
+      it "should return datetime array from time string with microseconds" do
+        time_array = parser._parse('2000-02-01 12:13:14.56', :datetime)
+        time_array.should == [2000,2,1,12,13,14,560000,nil]
       end
 
       it "should return date array from date string when type is datetime" do
@@ -151,6 +194,11 @@ describe Timeliness::Parser do
       end
 
       it "should return datetime array from datetime string when type is date" do
+        time_array = parser._parse('2000-02-01 12:13:14', :date)
+        time_array.should == [2000,2,1,12,13,14,nil,nil]
+      end
+
+      it "should return datetime array with zone from datetime string when type is date" do
         time_array = parser._parse('2000-02-01 12:13:14', :date)
         time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
@@ -218,13 +266,6 @@ describe Timeliness::Parser do
         time_array = parser._parse('2000-02-01', :strict => true)
         time_array.should_not be_nil
       end
-    end
-
-    it "should return nil if time hour is out of range for AM meridian" do
-      time_array = parser._parse('13:14 am', :time)
-      time_array.should == nil
-      time_array = parser._parse('00:14 am', :time)
-      time_array.should == nil
     end
 
     context "with :format option" do
