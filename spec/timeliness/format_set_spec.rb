@@ -1,9 +1,16 @@
 require 'spec_helper'
 
 describe Timeliness::FormatSet do
+  context "#compile!" do
+    let(:set) { Timeliness::FormatSet.new(['yyyy-mm-dd', 'dd/mm/yyyy']) }
+
+    it 'should set the regexp for the set' do
+      set.compile!
+      set.regexp.should_not be_nil
+    end
+  end
 
   context "compiled regexp" do
-
     context "for time formats" do
       format_tests = {
         'hh:nn:ss'  => {:pass => ['12:12:12', '01:01:01'], :fail => ['1:12:12', '12:1:12', '12:12:1', '12-12-12']},
