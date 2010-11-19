@@ -167,43 +167,6 @@ describe Timeliness::Parser do
   end
 
   context "_parse" do
-    context "with type" do
-      it "should return date array from date string" do
-        time_array = parser._parse('2000-02-01', :date)
-        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
-      end
-
-      it "should return time array from time string" do
-        time_array = parser._parse('12:13:14', :time)
-        time_array.should == [nil,nil,nil,12,13,14,nil,nil]
-      end
-
-      it "should return datetime values from datetime string" do
-        time_array = parser._parse('2000-02-01 12:13:14', :datetime)
-        time_array.should == [2000,2,1,12,13,14,nil,nil]
-      end
-
-      it "should return datetime array from time string with microseconds" do
-        time_array = parser._parse('2000-02-01 12:13:14.56', :datetime)
-        time_array.should == [2000,2,1,12,13,14,560000,nil]
-      end
-
-      it "should return date array from date string when type is datetime" do
-        time_array = parser._parse('2000-02-01', :datetime)
-        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
-      end
-
-      it "should return datetime array from datetime string when type is date" do
-        time_array = parser._parse('2000-02-01 12:13:14', :date)
-        time_array.should == [2000,2,1,12,13,14,nil,nil]
-      end
-
-      it "should return datetime array with zone from datetime string when type is date" do
-        time_array = parser._parse('2000-02-01 12:13:14', :date)
-        time_array.should == [2000,2,1,12,13,14,nil,nil]
-      end
-    end
-
     context "with no type" do
       it "should return date array from date string" do
         time_array = parser._parse('2000-02-01')
@@ -219,15 +182,42 @@ describe Timeliness::Parser do
         time_array = parser._parse('2000-02-01 12:13:14')
         time_array.should == [2000,2,1,12,13,14,nil,nil]
       end
+    end
 
-      it "should return date array from date string when type is datetime" do
-        time_array = parser._parse('2000-02-01')
+    context "with type" do
+      it "should return date array from date string" do
+        time_array = parser._parse('2000-02-01', :date)
         time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
       end
 
+      it "should not return time array from time string for :date type" do
+        time_array = parser._parse('12:13:14', :date)
+        time_array.should == nil
+      end
+
+      it "should return time array from time string" do
+        time_array = parser._parse('12:13:14', :time)
+        time_array.should == [nil,nil,nil,12,13,14,nil,nil]
+      end
+
+      it "should not return date array from date string for :time type" do
+        time_array = parser._parse('2000-02-01', :time)
+        time_array.should == nil
+      end
+
       it "should return datetime array from datetime string when type is date" do
-        time_array = parser._parse('2000-02-01 12:13:14')
+        time_array = parser._parse('2000-02-01 12:13:14', :date)
         time_array.should == [2000,2,1,12,13,14,nil,nil]
+      end
+
+      it "should return date array from date string when type is datetime" do
+        time_array = parser._parse('2000-02-01', :datetime)
+        time_array.should == [2000,2,1,nil,nil,nil,nil,nil]
+      end
+
+      it "should not return time array from time string when type is datetime" do
+        time_array = parser._parse('12:13:14', :datetime)
+        time_array.should == nil
       end
     end
 
