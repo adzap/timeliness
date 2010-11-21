@@ -24,7 +24,7 @@ module Timeliness
         return nil unless fast_date_valid_with_fallback(*time_array[0..2])
 
         zone_or_offset = time_array.delete_at(7)
-        zone, offset   = zone_and_offset(zone_or_offset)
+        zone, offset   = zone_and_offset(zone_or_offset) if zone_or_offset
 
         value = create_time_in_zone(time_array, zone || zone_option)
         # FIXME creates dependency that zone is set
