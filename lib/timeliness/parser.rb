@@ -7,8 +7,7 @@ module Timeliness
       def parse(value, *args)
         return value unless value.is_a?(String)
 
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        type = args.first
+        type, options = type_and_options_from_args(args)
 
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
@@ -50,6 +49,17 @@ module Timeliness
       end
 
       private
+
+      def type_and_options_from_args(args)
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        type_or_now = args.first
+        if type_or_now.is_a?(Symbol)
+          type = type_or_now
+        elsif type_or_now
+          options[:now] = type_or_now
+        end
+        return type, options
+      end
 
       def default_values_by_type(values, type, options)
         case type
