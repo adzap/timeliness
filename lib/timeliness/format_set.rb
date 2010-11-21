@@ -13,7 +13,7 @@ module Timeliness
     end
 
     # Compiles the formats into one big regexp. Stores the index of where
-    # each format's capture values begin in the match data.
+    # each format's capture values begin in the matchdata.
     def compile!
       regexp_string = ''
       @formats.inject(0) { |index, format_string|

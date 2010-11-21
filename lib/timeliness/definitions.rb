@@ -127,7 +127,7 @@ module Timeliness
     }
 
     # Mapping some common timezone abbreviations which are not mapped or
-    # mapped incosistenly in ActiveSupport (TzInfo).
+    # mapped inconsistenly in ActiveSupport (TzInfo).
     @timezone_mapping = {
       'AEST' => 'Australia/Sydney',
       'AEDT' => 'Australia/Sydney',
