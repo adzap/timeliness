@@ -44,33 +44,51 @@ describe Timeliness::Parser do
     end
 
     context "string with zone offset value" do
-      context "when current timezone is later than string zone" do
-        it 'should return value shifted by offset in current timezone' do
-          parse("2000-06-01T12:00:00+02:00").should == Time.zone.local(2000,6,1,20,0,0)
-          parse("2000-06-01T12:00:00-01:00").should == Time.zone.local(2000,6,1,23,0,0)
+      context "when current timezone is earler than string zone" do
+        it 'should return value shifted by positive offset in default timezone' do
+          value = parse("2000-06-01T12:00:00+02:00")
+          value.should == Time.zone.local(2000,6,1,20,0,0)
+          value.utc_offset.should == 10.hours
+        end
+
+        it 'should return value shifted by negative offset in default timezone' do
+          value = parse("2000-06-01T12:00:00-01:00")
+          value.should == Time.zone.local(2000,6,1,23,0,0)
+          value.utc_offset.should == 10.hours
         end
       end
 
-      context "when current timezone is earlier than string zone" do
-        before(:all) { Time.zone = 'America/Phoenix' }
-
-        it 'should return value shifted by offset in current timezone' do
-          parse("2000-06-01T12:00:00+02:00").should == Time.zone.local(2000,6,1,3,0,0)
-          parse("2000-06-01T12:00:00-01:00").should == Time.zone.local(2000,6,1,6,0,0)
+      context "when current timezone is later than string zone" do
+        before(:all) do
+          Timeliness.default_timezone = :current
+          Time.zone = 'America/Phoenix'
         end
 
-        after(:all)  { Time.zone = 'Melbourne' }
+        it 'should return value shifted by positive offset in default timezone' do
+          value = parse("2000-06-01T12:00:00+02:00")
+          value.should == Time.zone.local(2000,6,1,3,0,0)
+          value.utc_offset.should == -7.hours
+        end
+
+        it 'should return value shifted by negative offset in default timezone' do
+          value = parse("2000-06-01T12:00:00-01:00")
+          value.should == Time.zone.local(2000,6,1,6,0,0)
+          value.utc_offset.should == -7.hours
+        end
+
+        after(:all) do
+          Time.zone = 'Melbourne'
+          Timeliness.default_timezone = :local
+        end
       end
     end
 
     context "string with zone abbreviation" do
-      before(:all) { Time.zone = 'MST' }
-
-      it 'should return value in string zone' do
-        parse("Thu, 01 Jun 2000 03:00:00 MST").should == Time.zone.local(2000,6,1,3,0,0)
+      it 'should return value in string zone in default timezone' do
+        value = parse("Thu, 01 Jun 2000 03:00:00 MST")
+        value.should == Time.zone.local(2000,6,1,20,0,0)
+        value.utc_offset.should == 10.hours
       end
-
-      after(:all)  { Time.zone = 'Melbourne' }
     end
 
     context "with :datetime type" do
