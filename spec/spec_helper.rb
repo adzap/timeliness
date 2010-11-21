@@ -30,6 +30,8 @@ module TimelinessHelpers
   end
 end
 
+Time.zone = 'Melbourne'
+
 Rspec.configure do |c|
   c.mock_with :rspec
   c.include TimelinessHelpers

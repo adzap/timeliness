@@ -43,6 +43,36 @@ describe Timeliness::Parser do
       should_not_parse("2000-02-01 25:13:14")
     end
 
+    context "string with zone offset value" do
+      context "when current timezone is later than string zone" do
+        it 'should return value shifted by offset in current timezone' do
+          parse("2000-06-01T12:00:00+02:00").should == Time.zone.local(2000,6,1,20,0,0)
+          parse("2000-06-01T12:00:00-01:00").should == Time.zone.local(2000,6,1,23,0,0)
+        end
+      end
+
+      context "when current timezone is earlier than string zone" do
+        before(:all) { Time.zone = 'America/Phoenix' }
+
+        it 'should return value shifted by offset in current timezone' do
+          parse("2000-06-01T12:00:00+02:00").should == Time.zone.local(2000,6,1,3,0,0)
+          parse("2000-06-01T12:00:00-01:00").should == Time.zone.local(2000,6,1,6,0,0)
+        end
+
+        after(:all)  { Time.zone = 'Melbourne' }
+      end
+    end
+
+    context "string with zone abbreviation" do
+      before(:all) { Time.zone = 'MST' }
+
+      it 'should return value in string zone' do
+        parse("Thu, 01 Jun 2000 03:00:00 MST").should == Time.zone.local(2000,6,1,3,0,0)
+      end
+
+      after(:all)  { Time.zone = 'Melbourne' }
+    end
+
     context "with :datetime type" do
       it "should return time object for valid datetime string" do
         parse("2000-01-01 12:13:14", :datetime).should == Time.local(2000,1,1,12,13,14)

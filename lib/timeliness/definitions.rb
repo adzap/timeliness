@@ -100,7 +100,7 @@ module Timeliness
       'u'    => [ '\d{1,6}', :usec ],
       'ampm' => [ '[aApP]\.?[mM]\.?', :meridian ],
       'zo'   => [ '[+-]\d{2}:?\d{2}', :offset ],
-      'tz'   => [ '[A-Z]{1,4}', :zone ],
+      'tz'   => [ '[A-Z]{1,5}', :zone ],
       '_'    => [ '\s?' ]
     }
 
@@ -126,10 +126,25 @@ module Timeliness
       :meridian => [ nil ]
     }
 
+    # Mapping some common timezone abbreviations which are not mapped or
+    # mapped incosistenly in ActiveSupport (TzInfo).
+    @timezone_mapping = {
+      'AEST' => 'Australia/Sydney',
+      'AEDT' => 'Australia/Sydney',
+      'ACST' => 'Australia/Adelaide',
+      'ACDT' => 'Australia/Adelaide',
+      'PST'  => 'PST8PDT',
+      'PDT'  => 'PST8PDT',
+      'CST'  => 'CST6CDT',
+      'CDT'  => 'CST6CDT',
+      'EDT'  => 'EST5EDT',
+      'MDT'  => 'MST7MDT'
+    }
+
     US_FORMAT_REGEXP = /\Am{1,2}[^m]/
 
     class << self
-      attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components
+      attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components, :timezone_mapping
       attr_reader :date_format_set, :time_format_set, :datetime_format_set
 
       # Adds new formats. Must specify format type and can specify a :before

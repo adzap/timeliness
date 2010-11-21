@@ -13,25 +13,22 @@ module Timeliness
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
 
-        set_values_by_type(time_array, type, options) unless type == :datetime
-        make_time(time_array[0..6], options[:zone])
+        default_values_by_type(time_array, type, options) unless type == :datetime
+
+        make_time(time_array[0..7], options[:zone])
       rescue NoMethodError => ex
         raise ex unless ex.message =~ /zone/
         raise MissingTimezoneSupport, "ActiveSupport must be loaded to use timezones other than :utc and :local."
       end
 
-      def make_time(time_array, zone=nil)
+      def make_time(time_array, zone_option=nil)
         return nil unless fast_date_valid_with_fallback(*time_array[0..2])
 
+        zone, offset = zone_and_offset(zone_option, time_array.delete_at(7))
         zone ||= Timeliness.default_timezone
-        case zone
-        when :utc, :local
-          time_with_datetime_fallback(zone, *time_array.compact)
-        when :current
-          Time.zone.local(*time_array)
-        else
-          Time.use_zone(zone) { Time.zone.local(*time_array) }
-        end
+
+        value = create_time_in_zone(time_array, zone)
+        offset ? value + (value.utc_offset - offset) : value
       rescue ArgumentError, TypeError
         nil
       end
@@ -51,7 +48,7 @@ module Timeliness
 
       private
 
-      def set_values_by_type(values, type, options)
+      def default_values_by_type(values, type, options)
         case type
         when :date
           values[3..7] = nil
@@ -85,6 +82,26 @@ module Timeliness
         else
           Time.use_zone(zone) { Time.current }
         end
+      end
+
+      def create_time_in_zone(time_array, zone)
+        case zone
+        when :utc, :local
+          time_with_datetime_fallback(zone, *time_array.compact)
+        when :current
+          Time.zone.local(*time_array)
+        else
+          Time.use_zone(zone) { Time.zone.local(*time_array) }
+        end
+      end
+
+      def zone_and_offset(zone, parsed_value)
+        if parsed_value.is_a?(String)
+          zone   = Definitions.timezone_mapping[parsed_value] || parsed_value
+        else
+          offset = parsed_value
+        end
+        return zone, offset
       end
 
       # Taken from ActiveSupport and simplified
