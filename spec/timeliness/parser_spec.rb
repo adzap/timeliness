@@ -98,8 +98,8 @@ describe Timeliness::Parser do
         parse('2010-02-01 12:13', :time).should == Time.local(2000,1,1,12,13)
       end
 
-      it "should return nil if time hour is out of range for AM meridian" do
-        should_not_parse('13:14 am', :time)
+      it "should raise error if time hour is out of range for AM meridian" do
+        parse('13:14 am', :time).should be_nil
       end
     end
 
