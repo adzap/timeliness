@@ -28,6 +28,7 @@ module Timeliness
         zone, offset   = zone_and_offset(zone_or_offset)
 
         value = create_time_in_zone(time_array, zone || zone_option)
+        # FIXME creates dependency that zone is set
         value = value.in_time_zone if zone
 
         offset ? value + (value.utc_offset - offset) : value

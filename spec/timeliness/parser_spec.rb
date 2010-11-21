@@ -47,13 +47,13 @@ describe Timeliness::Parser do
       context "when current timezone is earler than string zone" do
         it 'should return value shifted by positive offset in default timezone' do
           value = parse("2000-06-01T12:00:00+02:00")
-          value.should == Time.zone.local(2000,6,1,20,0,0)
+          value.should == Time.local(2000,6,1,20,0,0)
           value.utc_offset.should == 10.hours
         end
 
         it 'should return value shifted by negative offset in default timezone' do
           value = parse("2000-06-01T12:00:00-01:00")
-          value.should == Time.zone.local(2000,6,1,23,0,0)
+          value.should == Time.local(2000,6,1,23,0,0)
           value.utc_offset.should == 10.hours
         end
       end
@@ -77,17 +77,27 @@ describe Timeliness::Parser do
         end
 
         after(:all) do
-          Time.zone = 'Melbourne'
+          Time.zone = nil
           Timeliness.default_timezone = :local
         end
       end
     end
 
     context "string with zone abbreviation" do
-      it 'should return value in string zone in default timezone' do
+      before(:all) do
+        Timeliness.default_timezone = :current
+        Time.zone = 'Melbourne'
+      end
+
+      it 'should return value using string zone in default timezone' do
         value = parse("Thu, 01 Jun 2000 03:00:00 MST")
-        value.should == Time.zone.local(2000,6,1,20,0,0)
+        value.should == Time.local(2000,6,1,20,0,0)
         value.utc_offset.should == 10.hours
+      end
+
+      after(:all) do
+        Time.zone = nil
+        Timeliness.default_timezone = :local
       end
     end
 
