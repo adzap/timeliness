@@ -27,7 +27,7 @@ module Timeliness
   @default_timezone = :local
 
   # Set the default date part for a time type values.
-  @date_for_time_type = [ 2000, 1, 1 ]
+  @date_for_time_type = lambda { Time.now }
 
   def self.date_for_time_type
     case @date_for_time_type

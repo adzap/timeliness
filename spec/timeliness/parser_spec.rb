@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Timeliness::Parser do
+  before(:all) do
+    Timecop.freeze(2010,1,1,0,0,0)
+  end
+
   context "parse" do
     it "should return time object for valid datetime string" do
       parse("2000-01-01 12:13:14").should be_kind_of(Time)
@@ -119,11 +123,11 @@ describe Timeliness::Parser do
 
     context "with :time type" do
       it "should return time object with a dummy date values" do
-        parse('12:13', :time).should == Time.local(2000,1,1,12,13)
+        parse('12:13', :time).should == Time.local(2010,1,1,12,13)
       end
 
       it "should ignore date in datetime string" do
-        parse('2010-02-01 12:13', :time).should == Time.local(2000,1,1,12,13)
+        parse('2010-02-01 12:13', :time).should == Time.local(2010,1,1,12,13)
       end
 
       it "should raise error if time hour is out of range for AM meridian" do
@@ -206,21 +210,14 @@ describe Timeliness::Parser do
       end
 
       context "with :zone option" do
-        before(:all) do
-          Timecop.freeze(2010,1,1,0,0,0)
-        end
-
         it "should use date from the specified zone" do
           time = parse("12:13:14", :time, :zone => :utc)
           time.year.should == 2009
           time.month.should == 12
           time.day.should == 31
         end
-
-        after(:all) do
-          Timecop.return
-        end
       end
+
     end
   end
 
@@ -416,9 +413,6 @@ describe Timeliness::Parser do
   end
 
   describe "current_date" do
-    before(:all) do
-      Timecop.freeze(2010,1,1,0,0,0)
-    end
 
     context "with no options" do
       it 'should return date_for_time_type values with no options' do
@@ -460,9 +454,9 @@ describe Timeliness::Parser do
         current_date(:zone => 'London').should == date_array
       end
     end
+  end
 
-    after(:all) do
-      Timecop.return
-    end
+  after(:all) do
+    Timecop.return
   end
 end
