@@ -5,7 +5,7 @@ describe Timeliness::Parser do
     Timecop.freeze(2010,1,1,0,0,0)
   end
 
-  context "parse" do
+  describe "parse" do
     it "should return time object for valid datetime string" do
       parse("2000-01-01 12:13:14").should be_kind_of(Time)
     end
@@ -182,7 +182,7 @@ describe Timeliness::Parser do
       end
     end
 
-    describe "for time type" do
+    context "for time type" do
       context "with date from date_for_time_type" do
         before do
           @original = Timeliness.date_for_time_type
@@ -221,7 +221,7 @@ describe Timeliness::Parser do
     end
   end
 
-  context "_parse" do
+  describe "_parse" do
     context "with no type" do
       it "should return date array from date string" do
         time_array = parser._parse('2000-02-01')
