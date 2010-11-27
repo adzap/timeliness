@@ -1,3 +1,6 @@
+= 0.3.1 - 2010-11-27
+* Fix issue with 2nd argument options being overidden
+
 = 0.3.0 - 2010-11-27
 * Support for parsed timezone offset or abbreviation being used in creating time value
 * Added timezone abbreviation mapping config option
