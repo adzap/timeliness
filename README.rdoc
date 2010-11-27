@@ -14,7 +14,7 @@ Date/time parser for Ruby with the following features:
 * I18n support (for months), if I18n gem loaded.
 * Fewer WTFs than Time/Date parse method.
 * Has no dependencies.
-* Works with Ruby MRI 1.8.*, 1.9.2, Rubinius
+* Works with Ruby MRI 1.8.*, 1.9.2, Rubinius and JRuby.
 
 Extracted from the {validates_timeliness gem}[http://github.com/adzap/validates_timeliness], it has been rewritten cleaner and much faster. It's most suitable for when
 you need to control the parsing behaviour. It's faster than the Time/Date class parse methods, so it
@@ -64,6 +64,9 @@ It can also be specified with :now option:
 
   Timeliness.parse('12:13:14', :now => Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
 
+As well conforming to the Ruby Time class style.
+
+  Timeliness.parse('12:13:14', Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
 
 === Timezone
 
@@ -95,13 +98,36 @@ To get super finicky, you can restrict the parsing to a single format with the :
   Timeliness.parse('08/09/2010 12:13:14', :format => 'yyyy-mm-dd hh:nn:ss')  #=> nil
 
 
+=== String with Offset or Zone Abbreviations
+
+Sometimes you may want to parse a string with a zone abbreviation (e.g. MST) or the zone offset (e.g. +1000).
+These values are supported by the parser and will be used when creating the time object. The return value
+will be in the default timezone or the zone specified with the :zone option.
+
+  Timeliness.parse('Wed, 08 Sep 2010 12:13:14 MST') => Thu, 09 Sep 2010 05:13:14 EST 10:00
+
+  Timeliness.parse('2010-09-08T12:13:14-06:00')     => Thu, 09 Sep 2010 05:13:14 EST 10:00
+
+To enable zone abbreviations to work you must have loaded ActiveSupport.
+
+The zone abbreviations supported are those defined in the TzInfo gem, used by ActiveSupport. If you find some
+that are missing you can add more:
+
+  Timeliness.timezone_mapping.update(
+    'ZZZ' => 'Sleepy Town'
+  )
+
+Where 'Sleepy Town' is a valid zone name supported by ActiveSupport/TzInfo.
+
+
 === Raw Parsed Values
 
 If you would like to get the raw array of values before the time object is created, you can with
 
-  Timeliness._parse('2010-09-08 12:13:14') # => [2010, 9, 8, 12, 13, 14, nil, nil]
+  Timeliness._parse('2010-09-08 12:13:14.123456 MST') # => [2010, 9, 8, 12, 13, 14, 123456, 'MST']
 
-The last two nils are for the empty value of microseconds, and timezone or offset.
+The last two value are the microseconds, and zone abbreviation or offset.
+Note: The format for this value is not defined. You can add it yourself, easily.
 
 
 == Formats
