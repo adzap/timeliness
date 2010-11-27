@@ -1,3 +1,9 @@
+= 0.3.0 - 2010-11-27
+* Support for parsed timezone offset or abbreviation being used in creating time value
+* Added timezone abbreviation mapping config option
+* Allow 2nd argument for parse method to be the type, :now value, or options hash.
+* Refactoring
+
 = 0.2.0 - 2010-10-27
 * Allow a lambda for date_for_time_type which is evaluated on parse
 * Return the offset or zone in array from _parse
