@@ -27,8 +27,7 @@ module Timeliness
         zone, offset   = zone_and_offset(zone_or_offset) if zone_or_offset
 
         value = create_time_in_zone(time_array, zone || zone_option)
-        # FIXME creates dependency that zone is set
-        value = value.in_time_zone if zone
+        value = time_in_zone(value, zone_option) if zone
 
         offset ? value + (value.utc_offset - offset) : value
       rescue ArgumentError, TypeError
@@ -94,6 +93,18 @@ module Timeliness
           Time.current
         else
           Time.use_zone(zone) { Time.current }
+        end
+      end
+
+      def time_in_zone(time, zone=nil)
+        zone ||= Timeliness.default_timezone
+        case zone
+        when :utc, :local
+          time.send("get#{zone}")
+        when :current
+          time.in_time_zone
+        else
+          Time.use_zone(zone) { time.in_time_zone }
         end
       end
 
