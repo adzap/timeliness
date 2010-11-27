@@ -54,7 +54,7 @@ module Timeliness
         type_or_now = args.first
         if type_or_now.is_a?(Symbol)
           type = type_or_now
-        elsif type_or_now
+        elsif !type_or_now.is_a?(Hash)
           options[:now] = type_or_now
         end
         return type, options
