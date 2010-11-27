@@ -5,6 +5,14 @@ require 'time'
 require 'parsedate'
 require 'timeliness'
 
+if defined?(JRUBY_VERSION)
+  # Warm up JRuby
+  20000.times do
+    Time.parse("2000-01-04 12:12:12")
+    Timeliness::Parser.parse("2000-01-04 12:12:12", :datetime)
+  end
+end
+
 n = 10000
 Benchmark.bm do |x|
   x.report('timeliness - datetime') {
@@ -91,7 +99,7 @@ Benchmark.bm do |x|
     end
   }
 
-  x.report('Rails fast date/time') {
+  x.report('ISO regexp for datetime') {
     n.times do
       "2000-01-04 12:12:12" =~ /\A(\d{4})-(\d{2})-(\d{2}) (\d{2})[\. :](\d{2})([\. :](\d{2}))?\Z/
       microsec = ($7.to_f * 1_000_000).to_i
