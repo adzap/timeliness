@@ -164,9 +164,19 @@ describe Timeliness::Parser do
 
       context "without ActiveSupport loaded" do
         it 'should output message' do
-          lambda {
+          expect {
             Time.should_receive(:zone).and_raise(NoMethodError.new("undefined method `zone' for Time:Class"))
-            time = parse("2000-06-01 12:13:14", :datetime, :zone => :current)
+            parse("2000-06-01 12:13:14", :zone => :current)
+          }.should raise_error(Timeliness::Parser::MissingTimezoneSupport)
+
+          expect {
+            Time.should_receive(:current).and_raise(NoMethodError.new("undefined method `current' for Time:Class"))
+            parse("12:13:14", :zone => :current)
+          }.should raise_error(Timeliness::Parser::MissingTimezoneSupport)
+
+          expect {
+            Time.should_receive(:use_zone).and_raise(NoMethodError.new("undefined method `use_zone' for Time:Class"))
+            parse("2000-06-01 12:13:14", :zone => 'London')
           }.should raise_error(Timeliness::Parser::MissingTimezoneSupport)
         end
       end

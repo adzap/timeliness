@@ -16,8 +16,8 @@ module Timeliness
 
         make_time(time_array[0..7], options[:zone])
       rescue NoMethodError => ex
-        raise ex unless ex.message =~ /zone/
-        raise MissingTimezoneSupport, "ActiveSupport must be loaded to use timezones other than :utc and :local."
+        raise ex unless ex.message =~ /undefined method `(zone|use_zone|current)' for Time:Class/
+        raise MissingTimezoneSupport, "ActiveSupport timezone support must be loaded to use timezones other than :utc and :local."
       end
 
       def make_time(time_array, zone_option=nil)
