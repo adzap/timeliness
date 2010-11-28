@@ -1,3 +1,6 @@
+= 0.3.2 - 2010-11-26
+* Catch all errors for ActiveSupport not being loaded for more helpful error
+
 = 0.3.1 - 2010-11-27
 * Fix issue with 2nd argument options being overidden
 
