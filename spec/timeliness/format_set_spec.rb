@@ -88,6 +88,11 @@ describe Timeliness::FormatSet do
       set.match('2000-01-02', 'yyyy-mm-dd').should be_kind_of(Array)
       set.match('2000-01-02', 'dd/mm/yyyy').should be_nil
     end
+
+    it 'should compile unknown format for one off match' do
+      set.match('20001011').should be_nil
+      set.match('20001011', 'yyyymmdd').should be_kind_of(Array)
+    end
   end
 
   def compile_regexp(format)

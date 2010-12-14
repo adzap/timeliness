@@ -28,7 +28,7 @@ module Timeliness
     end
 
     def match(string, format_string=nil)
-      format = @formats_hash[format_string] if format_string
+      format = single_format(format_string) if format_string
       match_regexp = format && format.regexp || @regexp
 
       if match_data = match_regexp.match(string)
@@ -40,5 +40,8 @@ module Timeliness
       end
     end
 
+    def single_format(format_string)
+       @formats_hash[format_string] || Format.new(format_string).compile!
+    end
   end
 end
