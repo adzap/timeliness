@@ -1,3 +1,7 @@
+= 0.3.3 - 2011-01-02
+* Add String core extension for to_time, to_date and to_datetime methods, like ActiveSupport
+* Allow arbitrary format string as :format option and it will be compiled, if not found.
+
 = 0.3.2 - 2010-11-26
 * Catch all errors for ActiveSupport not being loaded for more helpful error
 
