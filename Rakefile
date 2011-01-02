@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rake/rdoctask'
-require 'rubygems/specification'
 require 'rspec/core/rake_task'
 
 GEM_NAME = "timeliness"
