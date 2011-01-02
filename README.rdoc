@@ -130,6 +130,17 @@ The last two value are the microseconds, and zone abbreviation or offset.
 Note: The format for this value is not defined. You can add it yourself, easily.
 
 
+=== ActiveSupport Core Extensions
+
+To make it easier to use the parser in Rails or an app using ActiveSupport, you can add/override the methods
+for <tt>to_time</tt>, <tt>to_date</tt> and <tt>to_datetime</tt> on a string value. These methods will then use
+the Timeliness parser for converting a string, instead of the default.
+
+You just need to add this line to an initializer or other application file:
+
+  require 'timeliness/core_ext'
+
+
 == Formats
 
 The gem has default formats included which can be easily added to using the format syntax. Also 
