@@ -3,6 +3,7 @@ require 'rspec'
 require 'active_support/time'
 require 'timecop'
 require 'timeliness'
+require 'timeliness/core_ext'
 
 module TimelinessHelpers
   def parser
