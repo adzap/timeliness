@@ -2,18 +2,18 @@ $:.unshift(File.expand_path('lib'))
 
 require 'benchmark'
 require 'time'
-require 'parsedate'
+require 'parsedate' unless RUBY_VERSION =~ /^1\.9\./
 require 'timeliness'
 
 if defined?(JRUBY_VERSION)
   # Warm up JRuby
-  20000.times do
+  20_000.times do
     Time.parse("2000-01-04 12:12:12")
     Timeliness::Parser.parse("2000-01-04 12:12:12", :datetime)
   end
 end
 
-n = 10000
+n = 10_000
 Benchmark.bm do |x|
   x.report('timeliness - datetime') {
     n.times do
@@ -102,8 +102,7 @@ Benchmark.bm do |x|
   x.report('ISO regexp for datetime') {
     n.times do
       "2000-01-04 12:12:12" =~ /\A(\d{4})-(\d{2})-(\d{2}) (\d{2})[\. :](\d{2})([\. :](\d{2}))?\Z/
-      microsec = ($7.to_f * 1_000_000).to_i
-      Time.mktime($1.to_i, $2.to_i, $3.to_i, $3.to_i, $5.to_i, $6.to_i, microsec)
+      Time.mktime($1.to_i, $2.to_i, $3.to_i, $3.to_i, $5.to_i, $6.to_i)
     end
   }
 
@@ -133,19 +132,21 @@ Benchmark.bm do |x|
     end
   }
 
-  x.report('parsedate - valid') {
-    n.times do
-      arr = ParseDate.parsedate("2000-01-04 12:12:12")
-      Date.new(*arr[0..2])
-      Time.mktime(*arr)
-    end
-  }
+  if defined?(ParseDate)
+    x.report('parsedate - valid') {
+      n.times do
+        arr = ParseDate.parsedate("2000-01-04 12:12:12")
+        Date.new(*arr[0..2])
+        Time.mktime(*arr)
+      end
+    }
 
-  x.report('parsedate - invalid ') {
-    n.times do
-      arr = ParseDate.parsedate("2000-00-04 12:12:12")
-    end
-  }
+    x.report('parsedate - invalid ') {
+      n.times do
+        arr = ParseDate.parsedate("2000-00-04 12:12:12")
+      end
+    }
+  end
 
   x.report('strptime - valid') {
     n.times do
