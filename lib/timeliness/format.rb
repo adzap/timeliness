@@ -38,8 +38,8 @@ module Timeliness
       @regexp_string = format
       @regexp = Regexp.new("^(#{format})$")
       self
-    rescue
-      raise "The format '#{format_string}' failed to compile using regexp string #{format}."
+    rescue => ex
+      raise "The format '#{format_string}' failed to compile using regexp string #{format}. Error: #{ex.inspect}"
     end
 
     # Redefined on compile
