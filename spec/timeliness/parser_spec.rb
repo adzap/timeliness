@@ -6,7 +6,7 @@ describe Timeliness::Parser do
   end
 
   describe "parse" do
-    it "should return time object for valid datetime string" do
+    it "should return Time object for valid datetime string" do
       parse("2000-01-01 12:13:14").should be_kind_of(Time)
     end
 
@@ -88,10 +88,34 @@ describe Timeliness::Parser do
     end
 
     context "string with zone abbreviation" do
-      it 'should return value using string zone in default timezone' do
+      before do
+        Time.zone = 'Melbourne'
+      end
+
+      it 'should return value using string zone adjusted to default :local timezone' do
+        Timeliness.default_timezone = :local
         value = parse("Thu, 01 Jun 2000 03:00:00 MST")
         value.should == Time.local(2000,6,1,20,0,0)
         value.utc_offset.should == 10.hours
+      end
+
+      it 'should return value using string zone adjusted to default :current timezone' do
+        Timeliness.default_timezone = :current
+        Time.zone = 'Adelaide'
+        value = parse("Thu, 01 Jun 2000 03:00:00 MST")
+        value.should == Time.zone.local(2000,6,1,19,30,0)
+        value.utc_offset.should == 9.5.hours
+      end
+
+      it 'should return value using string zone adjusted to :zone option string timezone' do
+        Timeliness.default_timezone = :local
+        value = parse("Thu, 01 Jun 2000 03:00:00 MST", :zone => 'Perth')
+        value.should == Time.use_zone('Perth') { Time.zone.local(2000,6,1,18,0,0) }
+        value.utc_offset.should == 8.hours
+      end
+
+      after do
+        Time.zone = nil
       end
     end
 
