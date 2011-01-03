@@ -1,4 +1,6 @@
 module Timeliness
+  class CompilationError < StandardError; end
+
   class Format
     include Helpers
 
@@ -39,7 +41,7 @@ module Timeliness
       @regexp = Regexp.new("^(#{format})$")
       self
     rescue => ex
-      raise "The format '#{format_string}' failed to compile using regexp string #{format}. Error: #{ex.inspect}"
+      raise CompilationError, "The format '#{format_string}' failed to compile using regexp string #{format}. Error message: #{ex.inspect}"
     end
 
     # Redefined on compile

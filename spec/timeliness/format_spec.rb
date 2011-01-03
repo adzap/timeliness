@@ -1,7 +1,26 @@
 require 'spec_helper'
 
 describe Timeliness::Format do
-  context "#process" do
+  describe "#compile!" do
+    it 'should compile valid string format' do
+      expect { 
+        Timeliness::Format.new('yyyy-mm-dd hh:nn:ss.u zo').compile!
+      }.should_not raise_error
+    end
+
+    it 'should return self' do
+      format = Timeliness::Format.new('yyyy-mm-dd hh:nn:ss.u zo')
+      format.compile!.should == format
+    end
+
+    it 'should raise compilation error for bad format' do
+      expect { 
+        Timeliness::Format.new('|--[)').compile!
+      }.should raise_error(Timeliness::CompilationError)
+    end
+  end
+
+  describe "#process" do
     it "should define method which outputs date array with values in correct order" do
       format_for('yyyy-mm-dd').process('2000', '1', '2').should == [2000,1,2,nil,nil,nil,nil,nil]
     end
