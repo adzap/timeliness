@@ -52,6 +52,45 @@ describe Timeliness::Format do
     it "should define method which outputs datetime array with timezone string" do
       format_for('yyyy-mm-dd hh:nn:ss.u tz').process('2001', '02', '03', '04', '05', '06', '99', 'EST').should == [2001,2,3,4,5,6,990000,'EST']
     end
+
+    context "with long month" do
+      let(:format) { format_for('dd mmm yyyy') }
+
+      context "with I18n loaded" do
+        before(:all) do
+          I18n.locale = :es
+          I18n.backend.store_translations :es, :date => { :month_names => %w{ ~ Enero Febrero Marzo } }
+          I18n.backend.store_translations :es, :date => { :abbr_month_names => %w{ ~ Ene Feb Mar } }
+        end
+
+        it 'should parse abbreviated month for current locale to correct value' do
+          format.process('2', 'Ene', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
+        end
+
+        it 'should parse full month for current locale to correct value' do
+          format.process('2', 'Enero', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
+        end
+
+        after(:all) do
+          I18n.locale = :en
+        end
+      end
+
+      context "without I18n loaded" do
+        before do
+          format.stub(:i18n_loaded?).and_return(false)
+          I18n.should_not_receive(:t)
+        end
+
+        it 'should parse abbreviated month to correct value' do
+          format.process('2', 'Jan', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
+        end
+
+        it 'should parse full month to correct value' do
+          format.process('2', 'January', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
+        end
+      end
+    end
   end
 
   def format_for(format)

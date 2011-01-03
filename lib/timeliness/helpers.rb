@@ -27,11 +27,11 @@ module Timeliness
     end
 
     def month_names
-      defined?(I18n) ? I18n.t('date.month_names') : Date::MONTHNAMES
+      i18n_loaded? ? I18n.t('date.month_names') : Date::MONTHNAMES
     end
 
     def abbr_month_names
-      defined?(I18n) ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+      i18n_loaded? ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
     end
 
     def microseconds(usec)
@@ -43,6 +43,10 @@ module Timeliness
       parts = offset.scan(/\d\d/).map {|p| p.to_f }
       parts[1] = parts[1].to_f / 60
       (parts[0] + parts[1]) * sign * 3600
+    end
+
+    def i18n_loaded?
+      defined?(I18n)
     end
 
   end
