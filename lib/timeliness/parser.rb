@@ -23,11 +23,10 @@ module Timeliness
       def make_time(time_array, zone_option=nil)
         return nil unless fast_date_valid_with_fallback(*time_array[0..2])
 
-        zone_or_offset = time_array.delete_at(7)
-        zone, offset   = zone_and_offset(zone_or_offset) if zone_or_offset
+        zone, offset = zone_and_offset(time_array[7]) if time_array[7]
 
-        value = create_time_in_zone(time_array, zone || zone_option)
-        value = time_in_zone(value, zone_option) if zone
+        value = create_time_in_zone(time_array[0..6], zone || zone_option)
+        value = shift_time_to_zone(value, zone_option) if zone
 
         offset ? value + (value.utc_offset - offset) : value
       rescue ArgumentError, TypeError
@@ -36,8 +35,7 @@ module Timeliness
 
       def _parse(string, type=nil, options={})
         if options[:strict] && type
-          set = Definitions.send("#{type}_format_set")
-          set.match(string, options[:format])
+          Definitions.send("#{type}_format_set").match(string, options[:format])
         else
           values = nil
           Definitions.format_sets(type, string).find {|set| values = set.match(string, options[:format]) }
@@ -96,7 +94,7 @@ module Timeliness
         end
       end
 
-      def time_in_zone(time, zone=nil)
+      def shift_time_to_zone(time, zone=nil)
         zone ||= Timeliness.default_timezone
         case zone
         when :utc, :local
