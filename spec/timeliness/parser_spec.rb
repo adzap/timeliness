@@ -156,6 +156,13 @@ describe Timeliness::Parser do
       end
     end
 
+    context "with time value argument" do
+      it 'should use argument as :now option value' do
+        time = parse("12:13:14", Time.local(2010,1,1))
+        time.should == Time.local(2010,1,1,12,13,14)
+      end
+    end
+
     context "with :zone option" do
       context ":utc" do
         it "should return time object in utc timezone" do
