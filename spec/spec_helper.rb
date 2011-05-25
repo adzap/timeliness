@@ -31,7 +31,7 @@ module TimelinessHelpers
   end
 end
 
-Rspec.configure do |c|
+RSpec.configure do |c|
   c.mock_with :rspec
   c.include TimelinessHelpers
 end

@@ -1,11 +1,8 @@
-require 'rubygems'
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
 require 'rake/rdoctask'
 require 'rspec/core/rake_task'
-
-GEM_NAME = "timeliness"
-
-desc 'Default: run specs.'
-task :default => :spec
 
 desc "Run specs"
 RSpec::Core::RakeTask.new(:spec)
@@ -25,7 +22,5 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-desc "Create a gemspec file"
-task :build do
-  `gem build #{GEM_NAME}.gemspec`
-end
+desc 'Default: run specs.'
+task :default => :spec
