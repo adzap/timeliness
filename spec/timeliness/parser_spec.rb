@@ -169,12 +169,20 @@ describe Timeliness::Parser do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :utc)
           time.utc_offset.should == 0
         end
+
+        it 'should return nil for partial invalid time component' do
+          parse("2000-06-01 12:60", :datetime, :zone => :utc).should be_nil
+        end
       end
 
       context ":local" do
         it "should return time object in local system timezone" do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :local)
           time.utc_offset.should == 10.hours
+        end
+
+        it 'should return nil for partial invalid time component' do
+          parse("2000-06-01 12:60", :datetime, :zone => :local).should be_nil
         end
       end
 
@@ -184,12 +192,20 @@ describe Timeliness::Parser do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :current)
           time.utc_offset.should == 9.5.hours
         end
+
+        it 'should return nil for partial invalid time component' do
+          parse("2000-06-01 12:60", :datetime, :zone => :current).should be_nil
+        end
       end
 
       context "named zone" do
         it "should return time object in the timezone" do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => 'London')
           time.utc_offset.should == 1.hour
+        end
+
+        it 'should return nil for partial invalid time component' do
+          parse("2000-06-01 12:60", :datetime, :zone => 'London').should be_nil
         end
       end
 

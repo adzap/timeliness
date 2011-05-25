@@ -25,7 +25,7 @@ module Timeliness
 
         zone, offset = zone_and_offset(time_array[7]) if time_array[7]
 
-        value = create_time_in_zone(time_array[0..6], zone || zone_option)
+        value = create_time_in_zone(time_array[0..6].compact, zone || zone_option)
         value = shift_time_to_zone(value, zone_option) if zone
 
         offset ? value + (value.utc_offset - offset) : value
@@ -110,7 +110,7 @@ module Timeliness
         zone ||= Timeliness.default_timezone
         case zone
         when :utc, :local
-          time_with_datetime_fallback(zone, *time_array.compact)
+          time_with_datetime_fallback(zone, *time_array)
         when :current
           Time.zone.local(*time_array)
         else
