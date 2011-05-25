@@ -1,3 +1,6 @@
+= 0.3.4 - 2011-05-26
+* Compact time array when creating time in zone so that invalid time handling works properly. Fixes issue#3.
+
 = 0.3.3 - 2011-01-02
 * Add String core extension for to_time, to_date and to_datetime methods, like ActiveSupport
 * Allow arbitrary format string as :format option and it will be compiled, if not found.
