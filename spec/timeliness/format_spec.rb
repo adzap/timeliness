@@ -29,6 +29,14 @@ describe Timeliness::Format do
       format_for('dd/mm/yyyy').process('2', '1', '2000').should == [2000,1,2,nil,nil,nil,nil,nil]
     end
 
+    it "should define method which outputs date array with zeros when month and day are '0'" do
+      format_for('m/d/yy').process('0', '0', '0000').should == [0,0,0,nil,nil,nil,nil,nil]
+    end
+
+    it "should define method which outputs date array with zeros when month and day are '00'" do
+      format_for('m/d/yy').process('00', '00', '0000').should == [0,0,0,nil,nil,nil,nil,nil]
+    end
+
     it "should define method which outputs time array" do
       format_for('hh:nn:ss').process('01', '02', '03').should == [nil,nil,nil,1,2,3,nil,nil]
     end

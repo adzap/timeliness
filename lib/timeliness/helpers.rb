@@ -22,7 +22,7 @@ module Timeliness
     end
     
     def month_index(month)
-      return month.to_i if month.to_i > 0
+      return month.to_i if month.to_i > 0 || /0+/ =~ month
       month.length > 3 ? month_names.index(month.capitalize) : abbr_month_names.index(month.capitalize)
     end
 

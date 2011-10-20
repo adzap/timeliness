@@ -31,6 +31,14 @@ describe Timeliness::Parser do
       should_not_parse("2000-02-30")
     end
 
+    it "should return nil for invalid date string where month is '0'" do
+      should_not_parse("0/01/2000")
+    end
+
+    it "should return nil for invalid date string where month is '00'" do
+      should_not_parse("00/01/2000")
+    end
+
     it "should return time object for valid time string" do
       parse("12:13:14").should be_kind_of(Time)
     end
@@ -123,6 +131,10 @@ describe Timeliness::Parser do
       it "should return time object for valid datetime string" do
         parse("2000-01-01 12:13:14", :datetime).should == Time.local(2000,1,1,12,13,14)
       end
+
+      it "should return nil for invalid date string" do
+        parse("0/01/2000", :datetime).should be_nil
+      end
     end
 
     context "with :date type" do
@@ -132,6 +144,10 @@ describe Timeliness::Parser do
 
       it "should ignore time in datetime string" do
         parse('2000-02-01 12:13', :date).should == Time.local(2000,2,1)
+      end
+
+      it "should return nil for invalid date string" do
+        parse("0/01/2000", :date).should be_nil
       end
     end
 
