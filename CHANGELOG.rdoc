@@ -1,3 +1,6 @@
+= 0.3.5 - 2012-03-29
+* Correctly handle month value of 0. Fixes issue#4.
+
 = 0.3.4 - 2011-05-26
 * Compact time array when creating time in zone so that invalid time handling works properly. Fixes issue#3.
 
