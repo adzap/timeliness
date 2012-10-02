@@ -78,7 +78,7 @@ module Timeliness
         elsif options[:zone]
           current_time_in_zone(options[:zone])
         else
-          Timeliness.date_for_time_type
+          evaluate_date_for_time_type
         end
         now.is_a?(Array) ? now[0..2] : [now.year, now.month, now.day]
       end
@@ -140,6 +140,16 @@ module Timeliness
       # Only does full date check if month and day are possibly invalid.
       def fast_date_valid_with_fallback(year, month, day)
         month < 13 && (day < 29 || Date.valid_civil?(year, month, day))
+      end
+
+      def evaluate_date_for_time_type
+        case Timeliness.date_for_time_type
+        when Array
+          Timeliness.date_for_time_type
+        when Proc
+          v = Timeliness.date_for_time_type.call
+          [v.year, v.month, v.day]
+        end
       end
 
     end

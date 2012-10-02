@@ -24,20 +24,11 @@ module Timeliness
   #   - :current
   #   - 'Zone name'
   #
-  @default_timezone = :local
+  self.default_timezone = :local
 
   # Set the default date part for a time type values.
-  @date_for_time_type = lambda { Time.now }
-
-  def self.date_for_time_type
-    case @date_for_time_type
-    when Array
-      @date_for_time_type
-    when Proc
-      v = @date_for_time_type.call
-      [v.year, v.month, v.day]
-    end
-  end
+  #
+  self.date_for_time_type = lambda { Time.now }
 
   # Set the threshold value for a two digit year to be considered last century
   #
@@ -47,7 +38,7 @@ module Timeliness
   #     year = '29' is considered 2029
   #     year = '30' is considered 1930
   #
-  @ambiguous_year_threshold = 30
+  self.ambiguous_year_threshold = 30
 end
 
 Timeliness::Definitions.compile_formats

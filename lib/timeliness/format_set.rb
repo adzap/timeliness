@@ -41,7 +41,7 @@ module Timeliness
     end
 
     def single_format(format_string)
-       @formats_hash[format_string] || Format.new(format_string).compile!
+       @formats_hash.fetch(format_string) { Format.new(format_string).compile! }
     end
   end
 end
