@@ -19,18 +19,18 @@ describe Timeliness::Definitions do
     end
 
     it "should raise error if format exists" do
-      expect { definitions.add_formats(:time, "hh:nn:ss") }.should raise_error
+      expect { definitions.add_formats(:time, "hh:nn:ss") }.to raise_error
     end
 
     context "with :before option" do
       it "should add new format with higher precedence" do
         definitions.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
         time_array = parser._parse('59:23:58', :time)
-        time_array.should == [nil,nil,nil,23,58,59,nil,nil]
+        time_array.should eq [nil,nil,nil,23,58,59,nil,nil]
       end
 
       it "should raise error if :before format does not exist" do
-        expect { definitions.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.should raise_error
+        expect { definitions.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.to raise_error
       end
     end
 
@@ -63,7 +63,7 @@ describe Timeliness::Definitions do
     end
 
     it "should raise error if format does not exist" do
-      expect { definitions.remove_formats(:time, "ss:hh:nn") }.should raise_error()
+      expect { definitions.remove_formats(:time, "ss:hh:nn") }.to raise_error()
     end
 
     after do
@@ -74,9 +74,9 @@ describe Timeliness::Definitions do
 
   context "use_euro_formats" do
     it "should allow ambiguous date to be parsed as European format" do
-      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should eq [2000,1,2,nil,nil,nil,nil,nil]
       definitions.use_euro_formats
-      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should eq [2000,2,1,nil,nil,nil,nil,nil]
     end
   end
 
@@ -86,9 +86,9 @@ describe Timeliness::Definitions do
     end
 
     it "should allow ambiguous date to be parsed as European format" do
-      parser._parse('01/02/2000', :date).should == [2000,2,1,nil,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should eq [2000,2,1,nil,nil,nil,nil,nil]
       definitions.use_us_formats
-      parser._parse('01/02/2000', :date).should == [2000,1,2,nil,nil,nil,nil,nil]
+      parser._parse('01/02/2000', :date).should eq [2000,1,2,nil,nil,nil,nil,nil]
     end
   end
 end
