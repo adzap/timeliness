@@ -130,6 +130,7 @@ module Timeliness
 
     # Mapping some common timezone abbreviations which are not mapped or
     # mapped inconsistenly in ActiveSupport (TzInfo).
+    #
     @timezone_mapping = {
       'AEST' => 'Australia/Sydney',
       'AEDT' => 'Australia/Sydney',
@@ -184,22 +185,28 @@ module Timeliness
       # Removes US date formats so that ambiguous dates are parsed as European format
       #
       def use_euro_formats
-        @date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
-        @datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
+        @date_format_set     = @euro_date_format_set
+        @datetime_format_set = @euro_datetime_format_set
       end
 
       # Restores default to parse ambiguous dates as US format
       #
       def use_us_formats
-        @date_format_set     = FormatSet.compile(date_formats)
-        @datetime_format_set = FormatSet.compile(datetime_formats)
+        @date_format_set     = @us_date_format_set
+        @datetime_format_set = @us_datetime_format_set
       end
 
       def compile_formats
-        @sorted_token_keys   = nil
-        @time_format_set     = FormatSet.compile(time_formats)
-        @date_format_set     = FormatSet.compile(date_formats)
-        @datetime_format_set = FormatSet.compile(datetime_formats)
+        @sorted_token_keys = nil
+        @time_format_set   = FormatSet.compile(time_formats)
+
+        @us_date_format_set       = FormatSet.compile(date_formats)
+        @us_datetime_format_set   = FormatSet.compile(datetime_formats)
+        @euro_date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
+        @euro_datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
+
+        @date_format_set     = @us_date_format_set
+        @datetime_format_set = @us_datetime_format_set
       end
 
       def sorted_token_keys
@@ -208,6 +215,7 @@ module Timeliness
 
       # Returns format for type and other possible matching format set based on type
       # and value length. Gives minor speed-up by checking string length.
+      #
       def format_sets(type, string)
         case type
         when :date

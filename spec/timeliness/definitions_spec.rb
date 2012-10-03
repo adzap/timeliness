@@ -78,9 +78,15 @@ describe Timeliness::Definitions do
       definitions.use_euro_formats
       parser._parse('01/02/2000', :date).should eq [2000,2,1,nil,nil,nil,nil,nil]
     end
+
+    it "should not parse formats on switch to euro after initial compile" do
+      definitions.compile_formats
+      Timeliness::FormatSet.should_not_receive(:compile)
+      definitions.use_euro_formats
+    end
   end
 
-  context "use_use_formats" do
+  context "use_us_formats" do
     before do
       definitions.use_euro_formats
     end
@@ -89,6 +95,12 @@ describe Timeliness::Definitions do
       parser._parse('01/02/2000', :date).should eq [2000,2,1,nil,nil,nil,nil,nil]
       definitions.use_us_formats
       parser._parse('01/02/2000', :date).should eq [2000,1,2,nil,nil,nil,nil,nil]
+    end
+
+    it "should not parse formats on switch to euro after initial compile" do
+      definitions.compile_formats
+      Timeliness::FormatSet.should_not_receive(:compile)
+      definitions.use_us_formats
     end
   end
 end
