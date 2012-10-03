@@ -1,3 +1,8 @@
+= 0.3.7 - 2012-10-03
+* Change to a hot switch between US and Euro formats without a compile.
+* Fix date parsing with bad month name defaulting to 1 if year and day present.
+* Fix date parsing with nil month.
+
 = 0.3.6 - 2012-03-29
 * Fix bug with month_index using Integer method and leading zeroes treated as octal.
 
