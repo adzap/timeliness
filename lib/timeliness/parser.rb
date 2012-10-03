@@ -67,7 +67,7 @@ module Timeliness
         when nil
           dummy_date = current_date(options)
           values[0] ||= dummy_date[0]
-          values[1] ||= dummy_date[1]
+          values[1] ||= dummy_date[1] unless values.values_at(0,2).all?
           values[2] ||= dummy_date[2]
         end
       end
@@ -139,7 +139,7 @@ module Timeliness
       # Enforce strict date part validity which the Time class does not.
       # Only does full date check if month and day are possibly invalid.
       def fast_date_valid_with_fallback(year, month, day)
-        month < 13 && (day < 29 || Date.valid_civil?(year, month, day))
+        month && month < 13 && (day < 29 || Date.valid_civil?(year, month, day))
       end
 
       def evaluate_date_for_time_type

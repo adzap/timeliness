@@ -39,6 +39,10 @@ describe Timeliness::Parser do
       should_not_parse("00/01/2000")
     end
 
+    it "should return nil for invalid date month string" do
+      should_not_parse("1 Foo 2000")
+    end
+
     it "should return time object for valid time string" do
       parse("12:13:14").should be_kind_of(Time)
     end
