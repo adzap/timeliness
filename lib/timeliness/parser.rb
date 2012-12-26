@@ -129,7 +129,7 @@ module Timeliness
 
       # Taken from ActiveSupport and simplified
       def time_with_datetime_fallback(utc_or_local, year, month=1, day=1, hour=0, min=0, sec=0, usec=0)
-       return nil if hour > 23 || min > 59 || sec > 59
+        return nil if hour > 23 || min > 59 || sec > 59
         ::Time.send(utc_or_local, year, month, day, hour, min, sec, usec)
       rescue
         offset = utc_or_local == :local ? (::Time.local(2007).utc_offset.to_r/86400) : 0
