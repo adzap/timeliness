@@ -1,9 +1,11 @@
+# encoding: UTF-8
+
 require 'spec_helper'
 
 describe Timeliness::Format do
   describe "#compile!" do
     it 'should compile valid string format' do
-      expect { 
+      expect {
         Timeliness::Format.new('yyyy-mm-dd hh:nn:ss.u zo').compile!
       }.to_not raise_error
     end
@@ -14,7 +16,7 @@ describe Timeliness::Format do
     end
 
     it 'should raise compilation error for bad format' do
-      expect { 
+      expect {
         Timeliness::Format.new('|--[)').compile!
       }.to raise_error(Timeliness::CompilationError)
     end
@@ -62,40 +64,68 @@ describe Timeliness::Format do
     end
 
     context "with long month" do
-      let(:format) { format_for('dd mmm yyyy') }
+      context "for one locale" do
+        let(:format) { format_for('dd mmm yyyy') }
 
-      context "with I18n loaded" do
-        before(:all) do
-          I18n.locale = :es
-          I18n.backend.store_translations :es, :date => { :month_names => %w{ ~ Enero Febrero Marzo } }
-          I18n.backend.store_translations :es, :date => { :abbr_month_names => %w{ ~ Ene Feb Mar } }
+        context "with I18n loaded" do
+          before(:all) do
+            I18n.locale = :es
+            I18n.backend.store_translations :es, :date => { :month_names => %w{ ~ Enero Febrero Marzo } }
+            I18n.backend.store_translations :es, :date => { :abbr_month_names => %w{ ~ Ene Feb Mar } }
+          end
+
+          it 'should parse abbreviated month for current locale to correct value' do
+            format.process('2', 'Ene', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse full month for current locale to correct value' do
+            format.process('2', 'Enero', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          end
+
+          after(:all) do
+            I18n.locale = nil
+          end
         end
 
-        it 'should parse abbreviated month for current locale to correct value' do
-          format.process('2', 'Ene', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
-        end
+        context "without I18n loaded" do
+          before do
+            month_names_resolver.stub(:i18n_loaded?).and_return(false)
+            I18n.should_not_receive(:t)
+          end
 
-        it 'should parse full month for current locale to correct value' do
-          format.process('2', 'Enero', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
-        end
+          it 'should parse abbreviated month to correct value' do
+            format.process('2', 'Jan', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          end
 
-        after(:all) do
-          I18n.locale = :en
+          it 'should parse full month to correct value' do
+            format.process('2', 'January', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          end
         end
       end
 
-      context "without I18n loaded" do
-        before do
-          format.stub(:i18n_loaded?).and_return(false)
-          I18n.should_not_receive(:t)
-        end
+      context "for multiple locales" do
+        let(:format) { format_for('dd mmmm yyyy') }
 
-        it 'should parse abbreviated month to correct value' do
-          format.process('2', 'Jan', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
-        end
+        context "with I18n loaded" do
+          before(:all) do
+            I18n.locale = :en
+            I18n.backend.store_translations :es, :date => { :month_names => %w{ ~ Enero Febrero Marzo } }
+            I18n.backend.store_translations :es, :date => { :abbr_month_names => %w{ ~ Ene Feb Mar } }
+            I18n.backend.store_translations :ru, :date => { :month_names => %w{ ~ Январь Февраль Март } }
+            I18n.backend.store_translations :ru, :date => { :abbr_month_names => %w{ ~ Янв Фев Мар } }
+          end
 
-        it 'should parse full month to correct value' do
-          format.process('2', 'January', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          it 'should parse abbreviated month for current locale to correct value' do
+            format.process('2', 'Янв', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse full month for current locale to correct value' do
+            format.process('2', 'Январь', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          end
+
+          after(:all) do
+            I18n.locale = nil
+          end
         end
       end
     end

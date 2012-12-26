@@ -23,7 +23,7 @@ module Timeliness
         regexp_string = "#{regexp_string}(#{format.regexp_string})|"
         index + format.token_count + 1 # add one for wrapper capture
       }
-      @regexp = %r[\A(?:#{regexp_string.chop})\z]
+      @regexp = %r[\A(?:#{regexp_string.chop})\Z]
       self
     end
 

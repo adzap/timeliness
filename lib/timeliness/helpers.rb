@@ -20,18 +20,9 @@ module Timeliness
       end
       year.to_i
     end
-    
-    def month_index(month)
-      return month.to_i if month.to_i > 0 || /0+/ =~ month
-      month.length > 3 ? month_names.index(month.capitalize) : abbr_month_names.index(month.capitalize)
-    end
 
-    def month_names
-      i18n_loaded? ? I18n.t('date.month_names') : Date::MONTHNAMES
-    end
-
-    def abbr_month_names
-      i18n_loaded? ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+    def month_index(month, locale_agnostic = false)
+      MonthNamesResolver.instance.resolve(month, locale_agnostic)
     end
 
     def microseconds(usec)
@@ -44,10 +35,5 @@ module Timeliness
       parts[1] = parts[1].to_f / 60
       (parts[0] + parts[1]) * sign * 3600
     end
-
-    def i18n_loaded?
-      defined?(I18n)
-    end
-
   end
 end

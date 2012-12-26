@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'spec_helper'
 
 describe Timeliness::Parser do
@@ -288,11 +290,11 @@ describe Timeliness::Parser do
 
       context "with :zone option" do
         before :all do
-          Timecop.return
           ENV['TZ'] = 'Australia/Melbourne'
           Timecop.freeze(2010,1,1,0,0,0)
         end
         it "should use date from the specified zone" do
+
           time = parse("12:13:14", :time, :zone => :utc)
           time.year.should eq 2009
           time.month.should eq 12
@@ -301,7 +303,7 @@ describe Timeliness::Parser do
         after :all do
           Timecop.return
           ENV['TZ'] = nil
-          Timecop.freeze(2010,1,1,0,0,0)
+          Time.zone = nil
         end
       end
 
@@ -431,6 +433,23 @@ describe Timeliness::Parser do
         time_array = parser._parse('01-02-40', :date)
         time_array.should eq [1940,2,1,nil,nil,nil,nil,nil]
         Timeliness.ambiguous_year_threshold = default
+      end
+    end
+
+    context "for strings with unicode characters" do
+      before :all do
+        I18n.locale = :en
+        Timeliness.month_names [%w[~ Января Февраля Марта]]
+        Timeliness.add_formats :date, 'dd mmmm'
+      end
+
+      it "should correctly match" do
+        time_array = parser._parse('14 января', :date)
+        time_array.should eq [nil,1,14,nil,nil,nil,nil,nil]
+      end
+
+      after :all do
+        Timeliness.remove_formats :date, 'dd mmmm'
       end
     end
   end

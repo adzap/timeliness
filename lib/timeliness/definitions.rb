@@ -29,7 +29,7 @@ module Timeliness
     #     mmm = month long name (e.g. 'Jul' or 'July')
     #     ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
     #       u = microseconds matches 1 to 6 digits
-
+    #
     @time_formats = [
       'hh:nn:ss',
       'hh-nn-ss',
@@ -85,10 +85,11 @@ module Timeliness
     # regexp and key for format component mapping, if any.
     #
     @format_tokens = {
-      'ddd'  => [ '\w{3,9}' ],
+      'ddd'  => [ '[[:alnum:]]{3,9}' ],
       'dd'   => [ '\d{2}',   :day ],
       'd'    => [ '\d{1,2}', :day ],
-      'mmm'  => [ '\w{3,9}', :month ],
+      'mmmm' => [ '[[:alnum:]]{3,9}', :locale_agnostic_month ],
+      'mmm'  => [ '[[:alnum:]]{3,9}', :month ],
       'mm'   => [ '\d{2}',   :month ],
       'm'    => [ '\d{1,2}', :month ],
       'yyyy' => [ '\d{4}',   :year ],
@@ -116,16 +117,17 @@ module Timeliness
     # code is nil, then just the raw value is used.
     #
     @format_components = {
-      :year     => [ 0, 'unambiguous_year(year)'],
-      :month    => [ 1, 'month_index(month)'],
-      :day      => [ 2 ],
-      :hour     => [ 3, 'full_hour(hour, meridian ||= nil)'],
-      :min      => [ 4 ],
-      :sec      => [ 5 ],
-      :usec     => [ 6, 'microseconds(usec)'],
-      :offset   => [ 7, 'offset_in_seconds(offset)'],
-      :zone     => [ 7, 'zone'],
-      :meridian => [ nil ]
+      :year                  => [ 0, 'unambiguous_year(year)'],
+      :locale_agnostic_month => [ 1, 'month_index(locale_agnostic_month, true)'],
+      :month                 => [ 1, 'month_index(month, false)'],
+      :day                   => [ 2 ],
+      :hour                  => [ 3, 'full_hour(hour, meridian ||= nil)'],
+      :min                   => [ 4 ],
+      :sec                   => [ 5 ],
+      :usec                  => [ 6, 'microseconds(usec)'],
+      :offset                => [ 7, 'offset_in_seconds(offset)'],
+      :zone                  => [ 7, 'zone'],
+      :meridian              => [ nil ]
     }
 
     # Mapping some common timezone abbreviations which are not mapped or

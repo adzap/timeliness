@@ -14,6 +14,10 @@ module TimelinessHelpers
     Timeliness::Definitions
   end
 
+  def month_names_resolver
+    Timeliness::Helpers::MonthNamesResolver.instance
+  end
+
   def parse(*args)
     Timeliness::Parser.parse(*args)
   end

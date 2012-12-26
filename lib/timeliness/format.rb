@@ -38,7 +38,7 @@ module Timeliness
 
       define_process_method(token_order.compact)
       @regexp_string = format
-      @regexp = Regexp.new("^(#{format})$")
+      @regexp = %r[\A(#{format})\Z]
       self
     rescue => ex
       raise CompilationError, "The format '#{format_string}' failed to compile using regexp string #{format}. Error message: #{ex.inspect}"
