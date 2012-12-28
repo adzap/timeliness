@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'spec_helper'
 
 describe Timeliness::Parser do
@@ -61,16 +63,26 @@ describe Timeliness::Parser do
 
     context "string with zone offset value" do
       context "when current timezone is earler than string zone" do
+        before(:all) do
+          Timeliness.default_timezone = :current
+          Time.zone = 'Australia/Melbourne'
+        end
+
         it 'should return value shifted by positive offset in default timezone' do
           value = parse("2000-06-01T12:00:00+02:00")
-          value.should eq Time.local(2000,6,1,20,0,0)
+          value.should eq Time.zone.local(2000,6,1,20,0,0)
           value.utc_offset.should eq 10.hours
         end
 
         it 'should return value shifted by negative offset in default timezone' do
           value = parse("2000-06-01T12:00:00-01:00")
-          value.should eq Time.local(2000,6,1,23,0,0)
+          value.should eq Time.zone.local(2000,6,1,23,0,0)
           value.utc_offset.should eq 10.hours
+        end
+
+        after(:all) do
+          Time.zone = nil
+          Timeliness.default_timezone = :local
         end
       end
 
@@ -100,15 +112,15 @@ describe Timeliness::Parser do
     end
 
     context "string with zone abbreviation" do
-      before do
-        Time.zone = 'Melbourne'
+      before :all do
+        Time.zone = 'Australia/Melbourne'
       end
 
       it 'should return value using string zone adjusted to default :local timezone' do
         Timeliness.default_timezone = :local
         value = parse("Thu, 01 Jun 2000 03:00:00 MST")
-        value.should eq Time.local(2000,6,1,20,0,0)
-        value.utc_offset.should eq 10.hours
+        value.should eq Time.utc(2000,6,1,10,0,0).getlocal
+        value.utc_offset.should eq Time.now.utc_offset
       end
 
       it 'should return value using string zone adjusted to default :current timezone' do
@@ -126,7 +138,7 @@ describe Timeliness::Parser do
         value.utc_offset.should eq 8.hours
       end
 
-      after do
+      after :all do
         Time.zone = nil
       end
     end
@@ -198,7 +210,7 @@ describe Timeliness::Parser do
       context ":local" do
         it "should return time object in local system timezone" do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :local)
-          time.utc_offset.should eq 10.hours
+          time.utc_offset.should eq Time.now.utc_offset
         end
 
         it 'should return nil for partial invalid time component' do
@@ -277,11 +289,21 @@ describe Timeliness::Parser do
       end
 
       context "with :zone option" do
+        before :all do
+          ENV['TZ'] = 'Australia/Melbourne'
+          Timecop.freeze(2010,1,1,0,0,0)
+        end
         it "should use date from the specified zone" do
+
           time = parse("12:13:14", :time, :zone => :utc)
           time.year.should eq 2009
           time.month.should eq 12
           time.day.should eq 31
+        end
+        after :all do
+          Timecop.return
+          ENV['TZ'] = nil
+          Time.zone = nil
         end
       end
 
@@ -413,6 +435,23 @@ describe Timeliness::Parser do
         Timeliness.ambiguous_year_threshold = default
       end
     end
+
+    context "for strings with unicode characters" do
+      before :all do
+        I18n.locale = :en
+        Timeliness.month_names [%w[~ Января Февраля Марта]]
+        Timeliness.add_formats :date, 'dd mmmm'
+      end
+
+      it "should correctly match" do
+        time_array = parser._parse('14 января', :date)
+        time_array.should eq [nil,1,14,nil,nil,nil,nil,nil]
+      end
+
+      after :all do
+        Timeliness.remove_formats :date, 'dd mmmm'
+      end
+    end
   end
 
   describe "make_time" do
@@ -458,7 +497,7 @@ describe Timeliness::Parser do
       context ":local" do
         it "should return time object in local system timezone" do
           time = parser.make_time([2000,6,1,12,0,0], :local)
-          time.utc_offset.should eq 10.hours
+          time.utc_offset.should eq Time.now.utc_offset
         end
       end
 

@@ -51,14 +51,14 @@ ignored.
 
 === Specify the Current Date
 
-Notice a time only string will return with a date value. The date value can be configured globally 
+Notice a time only string will return with a date value. The date value can be configured globally
 with this setting:
 
   Timeliness.date_for_time_type = [2010, 1, 1]
 
 or using a lambda thats evaluated when parsed
 
-  Timeliness.date_for_time_type = lambda { Time.now } 
+  Timeliness.date_for_time_type = lambda { Time.now }
 
 It can also be specified with :now option:
 
@@ -119,7 +119,6 @@ that are missing you can add more:
 
 Where 'Sleepy Town' is a valid zone name supported by ActiveSupport/TzInfo.
 
-
 === Raw Parsed Values
 
 If you would like to get the raw array of values before the time object is created, you can with
@@ -143,7 +142,7 @@ You just need to add this line to an initializer or other application file:
 
 == Formats
 
-The gem has default formats included which can be easily added to using the format syntax. Also 
+The gem has default formats included which can be easily added to using the format syntax. Also
 formats can be easily removed so that they are no longer considered valid.
 
 Below are the default formats. If you think they are easy to read then you will be happy to know
@@ -222,6 +221,7 @@ Here is what each format token means:
       yy = 2 or 4 digit year
     yyyy = exactly 4 digit year
      mmm = month long name (e.g. 'Jul' or 'July')
+    mmmm = month long name in any available locale (e.g. matches 'Ene' even with I18n.locale == :en)
      ddd = Day name of 3 to 9 letters (e.g. Wed or Wednesday)
        u = microseconds matches 1 to 3 digits
 
@@ -250,6 +250,15 @@ You can switch back to US formats with
 
   Timeliness.use_us_formats
 
+=== Custom month names
+
+<em>This section applies to +mmmm+ token exclusively.</em>
+
+If you have strings with non-standart (e.g. pluralized) month names, they won't match against names stored in I18n. If you don't want to fire up a full-fledged pluralization (and you don't), you can add names you need on initialization (or later)
+
+  Timeliness.month_names [[nil, 'Января', 'Февраля', ...]]
+
+Format is identical to <tt>Date::ABBR_MONTHNAMES</tt>.
 
 === Customising Formats
 

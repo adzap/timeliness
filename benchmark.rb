@@ -13,7 +13,7 @@ if defined?(JRUBY_VERSION)
   end
 end
 
-n = 10_000
+n = 100_000
 Benchmark.bm do |x|
   x.report('timeliness - datetime') {
     n.times do

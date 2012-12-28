@@ -23,14 +23,13 @@ module Timeliness
         regexp_string = "#{regexp_string}(#{format.regexp_string})|"
         index + format.token_count + 1 # add one for wrapper capture
       }
-      @regexp = Regexp.new("^(?:#{regexp_string.chop})$")
+      @regexp = %r[\A(?:#{regexp_string.chop})\Z]
       self
     end
 
     def match(string, format_string=nil)
       format = single_format(format_string) if format_string
       match_regexp = format && format.regexp || @regexp
-
       if match_data = match_regexp.match(string)
         index    = match_data.captures.index(string)
         start    = index + 1

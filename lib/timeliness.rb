@@ -1,6 +1,7 @@
 require 'date'
 require 'forwardable'
 
+require 'timeliness/helpers/month_names_resolver'
 require 'timeliness/helpers'
 require 'timeliness/definitions'
 require 'timeliness/format'
@@ -13,13 +14,14 @@ module Timeliness
     extend Forwardable
     def_delegators Parser, :parse, :_parse
     def_delegators Definitions, :add_formats, :remove_formats, :use_us_formats, :use_euro_formats
+    def_delegators Helpers::MonthNamesResolver, :month_names
     attr_accessor :default_timezone, :date_for_time_type, :ambiguous_year_threshold
   end
 
   # Default timezone. Options:
   #   - :local (default)
   #   - :utc
-  #   
+  #
   #   If ActiveSupport loaded, also
   #   - :current
   #   - 'Zone name'
