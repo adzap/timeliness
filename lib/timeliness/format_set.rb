@@ -30,6 +30,7 @@ module Timeliness
     def match(string, format_string=nil)
       format = single_format(format_string) if format_string
       match_regexp = format && format.regexp || @regexp
+
       if match_data = match_regexp.match(string)
         index    = match_data.captures.index(string)
         start    = index + 1

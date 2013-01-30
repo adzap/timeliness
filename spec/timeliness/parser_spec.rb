@@ -110,7 +110,7 @@ describe Timeliness::Parser do
     end
 
     context "string with zone abbreviation" do
-      before :all do
+      before(:all) do
         Time.zone = 'Australia/Melbourne'
       end
 
@@ -136,7 +136,7 @@ describe Timeliness::Parser do
         value.utc_offset.should eq 8.hours
       end
 
-      after :all do
+      after(:all) do
         Time.zone = nil
       end
     end
@@ -287,19 +287,21 @@ describe Timeliness::Parser do
       end
 
       context "with :zone option" do
-        before :all do
+        before(:all) do
           Timecop.return
           @current_tz = ENV['TZ']
           ENV['TZ'] = 'Australia/Melbourne'
           Timecop.freeze(2010,1,1,0,0,0)
         end
+
         it "should use date from the specified zone" do
           time = parse("12:13:14", :time, :zone => :utc)
           time.year.should eq 2009
           time.month.should eq 12
           time.day.should eq 31
         end
-        after :all do
+
+        after(:all) do
           Timecop.return
           ENV['TZ'] = @current_tz
           Timecop.freeze(2010,1,1,0,0,0)
@@ -479,7 +481,7 @@ describe Timeliness::Parser do
       context ":local" do
         it "should return time object in local system timezone" do
           time = parser.make_time([2000,6,1,12,0,0], :local)
-          time.utc_offset.should eq Time.now.utc_offset
+          time.utc_offset.should eq Time.mktime(2000,6,1,12,0,0).utc_offset
         end
       end
 

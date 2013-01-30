@@ -14,14 +14,15 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = %q{timeliness}
 
-  s.add_development_dependency 'activesupport', '~> 3.0'
-  s.add_development_dependency 'tzinfo'
+  s.add_development_dependency 'rake', '~> 0.9.0'
+  s.add_development_dependency 'activesupport', '~> 3.2'
+  s.add_development_dependency 'tzinfo', '0.3.31'
   s.add_development_dependency 'rspec', '~> 2.4'
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'i18n'
 
   s.files            = `git ls-files`.split("\n")
-  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock}
+  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock }
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc"]
   s.require_paths    = ["lib"]
 end
