@@ -23,15 +23,15 @@ module Timeliness
     
     def month_index(month)
       return month.to_i if month.to_i > 0 || /0+/ =~ month
-      month.length > 3 ? month_names.index(month.capitalize) : abbr_month_names.index(month.capitalize)
+      month_names.index(month.downcase) || abbr_month_names.index(month.downcase)
     end
 
     def month_names
-      i18n_loaded? ? I18n.t('date.month_names') : Date::MONTHNAMES
+      (i18n_loaded? ? I18n.t('date.month_names') : Date::MONTHNAMES).map { |month| month.try(&:downcase) }
     end
 
     def abbr_month_names
-      i18n_loaded? ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES
+      (i18n_loaded? ? I18n.t('date.abbr_month_names') : Date::ABBR_MONTHNAMES).map { |month| month.try(&:downcase) }
     end
 
     def microseconds(usec)
