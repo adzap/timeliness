@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'spec_helper'
 
 describe Timeliness::Format do
@@ -65,18 +66,52 @@ describe Timeliness::Format do
       let(:format) { format_for('dd mmm yyyy') }
 
       context "with I18n loaded" do
-        before(:all) do
-          I18n.locale = :es
-          I18n.backend.store_translations :es, :date => { :month_names => %w{ ~ Enero Febrero Marzo } }
-          I18n.backend.store_translations :es, :date => { :abbr_month_names => %w{ ~ Ene Feb Mar } }
+        context 'with capitalized month names and short abbreviations' do
+          before(:all) do
+            I18n.locale = :de
+            I18n.backend.store_translations :de, :date => { :month_names => %w{ ~ Januar Februar März } }
+            I18n.backend.store_translations :de, :date => { :abbr_month_names => %w{ ~ Jan Feb Mär } }
+          end
+
+          it 'should parse abbreviated capitalized month for current locale to correct value' do
+            format.process('2', 'Mär', '2000').should eq [2000,3,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse full capitalized month for current locale to correct value' do
+            format.process('2', 'März', '2000').should eq [2000,3,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse abbreviated lowercase month for current locale to correct value' do
+            format.process('2', 'mär', '2000').should eq [2000,3,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse full lowercase month for current locale to correct value' do
+            format.process('2', 'märz', '2000').should eq [2000,3,2,nil,nil,nil,nil,nil]
+          end
         end
 
-        it 'should parse abbreviated month for current locale to correct value' do
-          format.process('2', 'Ene', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
-        end
+        context 'with lowercase month names and long abbreviations' do
+          before(:all) do
+            I18n.locale = :fr
+            I18n.backend.store_translations :fr, :date => { :month_names => %w{ ~ janvier février mars } }
+            I18n.backend.store_translations :fr, :date => { :abbr_month_names => %w{ ~ jan. fév. mar. } }
+          end
 
-        it 'should parse full month for current locale to correct value' do
-          format.process('2', 'Enero', '2000').should eq [2000,1,2,nil,nil,nil,nil,nil]
+          it 'should parse abbreviated capitalized month for current locale to correct value' do
+            format.process('2', 'Fév.', '2000').should eq [2000,2,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse full capitalized month for current locale to correct value' do
+            format.process('2', 'Février', '2000').should eq [2000,2,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse abbreviated lowercase month for current locale to correct value' do
+            format.process('2', 'fév.', '2000').should eq [2000,2,2,nil,nil,nil,nil,nil]
+          end
+
+          it 'should parse full lowercase month for current locale to correct value' do
+            format.process('2', 'février', '2000').should eq [2000,2,2,nil,nil,nil,nil,nil]
+          end
         end
 
         after(:all) do
