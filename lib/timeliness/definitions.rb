@@ -85,10 +85,10 @@ module Timeliness
     # regexp and key for format component mapping, if any.
     #
     @format_tokens = {
-      'ddd'  => [ '\w{3,9}' ],
+      'ddd'  => [ '[[[:alnum:]]\.]{1,14}' ],
       'dd'   => [ '\d{2}',   :day ],
       'd'    => [ '\d{1,2}', :day ],
-      'mmm'  => [ '\w{3,9}', :month ],
+      'mmm'  => [ '[[[:alnum:]]\.]{2,11}', :month ],
       'mm'   => [ '\d{2}',   :month ],
       'm'    => [ '\d{1,2}', :month ],
       'yyyy' => [ '\d{4}',   :year ],

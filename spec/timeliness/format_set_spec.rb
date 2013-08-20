@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'spec_helper'
 
 describe Timeliness::FormatSet do
@@ -45,8 +46,9 @@ describe Timeliness::FormatSet do
         'd\m\yy'     => {:pass => ['1\2\01', '1\02\00', '01\02\2000'], :fail => ['1\2\0', '1/2/01']},
         'd-m-yy'     => {:pass => ['1-2-01', '1-02-00', '01-02-2000'], :fail => ['1-2-0', '1/2/01']},
         'd.m.yy'     => {:pass => ['1.2.01', '1.02.00', '01.02.2000'], :fail => ['1.2.0', '1/2/01']},
-        'd mmm yy'   => {:pass => ['1 Feb 00', '1 Feb 2000', '1 February 00', '01 February 2000'],
-                          :fail => ['1 Fe 00', 'Feb 1 2000', '1 Feb 0']}
+        'd mmm yy'   => {:pass => ['1 Feb 00', '1 Feb 2000', '1 February 00', '01 February 2000', '1 6月 12',
+                                   '1 янв. 12', '1 październik 12'],
+                          :fail => ['Feb 1 2000', '1 Feb 0']}
       }
       format_tests.each do |format, values|
         it "should correctly match dates in format '#{format}'" do
@@ -59,7 +61,8 @@ describe Timeliness::FormatSet do
 
     context "for datetime formats" do
       format_tests = {
-        'ddd mmm d hh:nn:ss zo yyyy'  => {:pass => ['Sat Jul 19 12:00:00 +1000 2008'], :fail => []},
+        'ddd mmm d hh:nn:ss zo yyyy'  => {:pass => ['Sat Jul 19 12:00:00 +1000 2008', 'Ş. İyn 19 12:00:00 +1000 2008',
+          'ส ก.ค. 19 12:00:00 +1000 2008', 'ketvirtadienis rugpjūčio 19 12:00:00 +1000 2008'], :fail => []},
         'yyyy-mm-ddThh:nn:ss(?:Z|zo)' => {:pass => ['2008-07-19T12:00:00+10:00', '2008-07-19T12:00:00Z'], :fail => ['2008-07-19T12:00:00Z+10:00']},
       }
       format_tests.each do |format, values|
