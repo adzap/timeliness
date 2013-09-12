@@ -120,7 +120,7 @@ describe Timeliness::Parser do
         Timeliness.default_timezone = :local
         value = parse("Thu, 01 Jun 2000 03:00:00 MST")
         value.should eq Time.utc(2000,6,1,10,0,0).getlocal
-        value.utc_offset.should eq Time.now.utc_offset
+        value.utc_offset.should eq Time.mktime(2000, 6, 1, 10, 0, 0).utc_offset
       end
 
       it 'should return value using string zone adjusted to default :current timezone' do
@@ -210,7 +210,7 @@ describe Timeliness::Parser do
       context ":local" do
         it "should return time object in local system timezone" do
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :local)
-          time.utc_offset.should eq Time.now.utc_offset
+          time.utc_offset.should eq Time.mktime(2000, 6, 1, 12, 13, 14).utc_offset
         end
 
         it 'should return nil for partial invalid time component' do
@@ -497,7 +497,7 @@ describe Timeliness::Parser do
       context ":local" do
         it "should return time object in local system timezone" do
           time = parser.make_time([2000,6,1,12,0,0], :local)
-          time.utc_offset.should eq Time.now.utc_offset
+          time.utc_offset.should eq Time.mktime(2000,6,1,12,0,0).utc_offset
         end
       end
 
