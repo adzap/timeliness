@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = %q{timeliness}
 
-  s.add_dependency 'activesupport', '~> 3.0'
+  s.add_dependency 'activesupport'
   s.add_dependency 'tzinfo'
 
   s.add_development_dependency 'rspec', '~> 2.4'
