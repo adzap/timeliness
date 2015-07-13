@@ -146,6 +146,10 @@ describe Timeliness::Parser do
         parse("2000-01-01 12:13:14", :datetime).should eq Time.local(2000,1,1,12,13,14)
       end
 
+      it "should not add 12 hours to the hour if the meridian is passed in with 24-hour time" do
+        parse("2015-07-14 14:00PM", :datetime).should eq Time.local(2015,7,14,14,00,00)
+      end
+
       it "should return nil for invalid date string" do
         parse("0/01/2000", :datetime).should be_nil
       end
