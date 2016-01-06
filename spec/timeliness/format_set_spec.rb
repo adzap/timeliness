@@ -6,7 +6,7 @@ describe Timeliness::FormatSet do
 
     it 'should set the regexp for the set' do
       set.compile!
-      set.regexp.should_not be_nil
+      expect(set.regexp).not_to be_nil
     end
   end
 
@@ -28,8 +28,8 @@ describe Timeliness::FormatSet do
       format_tests.each do |format, values|
         it "should correctly match times in format '#{format}'" do
           regexp = compile_regexp(format)
-          values[:pass].each {|value| value.should match(regexp)}
-          values[:fail].each {|value| value.should_not match(regexp)}
+          values[:pass].each {|value| expect(value).to match(regexp)}
+          values[:fail].each {|value| expect(value).not_to match(regexp)}
         end
       end
     end
@@ -51,8 +51,8 @@ describe Timeliness::FormatSet do
       format_tests.each do |format, values|
         it "should correctly match dates in format '#{format}'" do
           regexp = compile_regexp(format)
-          values[:pass].each {|value| value.should match(regexp)}
-          values[:fail].each {|value| value.should_not match(regexp)}
+          values[:pass].each {|value| expect(value).to match(regexp)}
+          values[:fail].each {|value| expect(value).not_to match(regexp)}
         end
       end
     end
@@ -65,8 +65,8 @@ describe Timeliness::FormatSet do
       format_tests.each do |format, values|
         it "should correctly match datetimes in format '#{format}'" do
           regexp = compile_regexp(format)
-          values[:pass].each {|value| value.should match(regexp)}
-          values[:fail].each {|value| value.should_not match(regexp)}
+          values[:pass].each {|value| expect(value).to match(regexp)}
+          values[:fail].each {|value| expect(value).not_to match(regexp)}
         end
       end
     end
@@ -77,21 +77,21 @@ describe Timeliness::FormatSet do
     let(:set) { Timeliness::FormatSet.compile(['yyyy-mm-dd', 'dd/mm/yyyy']) }
 
     it 'should return array if string matches a format in set' do
-      set.match('2000-01-02').should be_kind_of(Array)
+      expect(set.match('2000-01-02')).to be_kind_of(Array)
     end
 
     it 'should return nil if string does not matches a format in set' do
-      set.match('2nd Feb 2000').should be_nil
+      expect(set.match('2nd Feb 2000')).to be_nil
     end
 
     it 'should only use specific format string for match if provided' do
-      set.match('2000-01-02', 'yyyy-mm-dd').should be_kind_of(Array)
-      set.match('2000-01-02', 'dd/mm/yyyy').should be_nil
+      expect(set.match('2000-01-02', 'yyyy-mm-dd')).to be_kind_of(Array)
+      expect(set.match('2000-01-02', 'dd/mm/yyyy')).to be_nil
     end
 
     it 'should compile unknown format for one off match' do
-      set.match('20001011').should be_nil
-      set.match('20001011', 'yyyymmdd').should be_kind_of(Array)
+      expect(set.match('20001011')).to be_nil
+      expect(set.match('20001011', 'yyyymmdd')).to be_kind_of(Array)
     end
   end
 
