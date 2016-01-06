@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Timeliness::Definitions do
 
   context "add_formats" do

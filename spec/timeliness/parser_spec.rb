@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Timeliness::Parser do
   before(:all) do
     Timecop.freeze(2010,1,1,0,0,0)

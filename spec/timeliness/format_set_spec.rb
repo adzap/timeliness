@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Timeliness::FormatSet do
   context "#compile!" do
     let(:set) { Timeliness::FormatSet.new(['yyyy-mm-dd', 'dd/mm/yyyy']) }

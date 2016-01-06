@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Timeliness::Format do
   describe "#compile!" do
     it 'should compile valid string format' do

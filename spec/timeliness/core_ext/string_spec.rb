@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Timeliness::CoreExt, 'String' do
   # Test values taken from ActiveSupport unit tests for compatibility
 
