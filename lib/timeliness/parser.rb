@@ -5,7 +5,8 @@ module Timeliness
     class << self
 
       def parse(value, *args)
-        return value unless value.is_a?(String)
+        return value if acts_like_temporal?(value)
+        return nil unless parseable?(value)
 
         type, options = type_and_options_from_args(args)
 
@@ -46,6 +47,14 @@ module Timeliness
       end
 
       private
+
+      def parseable?(value)
+        value.is_a?(String)
+      end
+
+      def acts_like_temporal?(value)
+        value.is_a?(Time) || value.is_a?(Date) || value.respond_to?(:acts_like_date?) || value.respond_to?(:acts_like_time?)
+      end
 
       def type_and_options_from_args(args)
         options = args.last.is_a?(Hash) ? args.pop : {}

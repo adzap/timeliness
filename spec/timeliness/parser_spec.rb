@@ -18,9 +18,16 @@ describe Timeliness::Parser do
       parse(nil).should be_nil
     end
 
-    it "should return return same value if value not a string" do
-      value = Time.now
-      parse(value).should eq value
+    it "should return same value if value is a Time, Date, or DateTime" do
+      [Time.now, Date.new, DateTime.new].each do |value|
+        parse(value).should eq value
+      end
+    end
+
+    it "should return nil for non-string non-temporal values" do
+      [ {}, [], Class.new ].each do |value|
+        parse(value).should eq nil
+      end
     end
 
     it "should return time object for valid date string" do
