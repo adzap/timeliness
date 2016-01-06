@@ -1,8 +1,8 @@
 module Timeliness
-  class CompilationError < StandardError; end
-
   class Format
     include Helpers
+
+    CompilationFailed = Class.new(StandardError)
 
     attr_reader :format_string, :regexp, :regexp_string, :token_count
 
@@ -41,7 +41,7 @@ module Timeliness
       @regexp = Regexp.new("^(#{format})$")
       self
     rescue => ex
-      raise CompilationError, "The format '#{format_string}' failed to compile using regexp string #{format}. Error message: #{ex.inspect}"
+      raise CompilationFailed, "The format '#{format_string}' failed to compile using regexp string #{format}. Error message: #{ex.inspect}"
     end
 
     # Redefined on compile

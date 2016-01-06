@@ -16,7 +16,7 @@ describe Timeliness::Format do
     it 'should raise compilation error for bad format' do
       expect { 
         Timeliness::Format.new('|--[)').compile!
-      }.to raise_error(Timeliness::CompilationError)
+      }.to raise_error(Timeliness::Format::CompilationFailed)
     end
   end
 

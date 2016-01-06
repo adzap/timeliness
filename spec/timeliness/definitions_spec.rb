@@ -19,7 +19,7 @@ describe Timeliness::Definitions do
     end
 
     it "should raise error if format exists" do
-      expect { definitions.add_formats(:time, "hh:nn:ss") }.to raise_error
+      expect { definitions.add_formats(:time, "hh:nn:ss") }.to raise_error(Timeliness::Definitions::DuplicateFormat)
     end
 
     context "with :before option" do
@@ -30,7 +30,7 @@ describe Timeliness::Definitions do
       end
 
       it "should raise error if :before format does not exist" do
-        expect { definitions.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.to raise_error
+        expect { definitions.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.to raise_error(Timeliness::Definitions::FormatNotFound)
       end
     end
 
@@ -63,7 +63,7 @@ describe Timeliness::Definitions do
     end
 
     it "should raise error if format does not exist" do
-      expect { definitions.remove_formats(:time, "ss:hh:nn") }.to raise_error()
+      expect { definitions.remove_formats(:time, "ss:hh:nn") }.to raise_error(Timeliness::Definitions::FormatNotFound)
     end
 
     after do

@@ -145,6 +145,8 @@ module Timeliness
     }
 
     US_FORMAT_REGEXP = /\Am{1,2}[^m]/
+    FormatNotFound = Class.new(StandardError)
+    DuplicateFormat = Class.new(StandardError)
 
     class << self
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components, :timezone_mapping
@@ -160,10 +162,10 @@ module Timeliness
         formats = send("#{type}_formats")
         options = add_formats.last.is_a?(Hash) ? add_formats.pop : {}
         before  = options[:before]
-        raise "Format for :before option #{format} was not found." if before && !formats.include?(before)
+        raise FormatNotFound, "Format for :before option #{before.inspect} was not found." if before && !formats.include?(before)
 
         add_formats.each do |format|
-          raise "Format #{format} is already included in #{type} formats" if formats.include?(format)
+          raise DuplicateFormat, "Format #{format.inspect} is already included in #{type.inspect} formats" if formats.include?(format)
 
           index = before ? formats.index(before) : -1
           formats.insert(index, format)
@@ -176,7 +178,7 @@ module Timeliness
       def remove_formats(type, *remove_formats)
         remove_formats.each do |format|
           unless send("#{type}_formats").delete(format)
-            raise "Format #{format} not found in #{type} formats"
+            raise FormatNotFound, "Format #{format.inspect} not found in #{type.inspect} formats"
           end
         end
         compile_formats
