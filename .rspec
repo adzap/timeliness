@@ -1,1 +1,3 @@
 --color
+--require spec_helper
+--require timeliness_helper
