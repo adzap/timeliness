@@ -78,7 +78,9 @@ module Timeliness
       'yyyy-mm-ddThh:nn:ssZ', # ISO 8601 without zone offset
       'yyyy-mm-ddThh:nn:sszo', # ISO 8601 with zone offset
       'yyyy-mm-ddThh:nn:ss.u', # ISO 8601 with usec
-      'yyyy-mm-ddThh:nn:ss.uzo' # ISO 8601 with usec and offset
+      'yyyy-mm-ddThh:nn:ss.uzo', # ISO 8601 with usec and offset
+      'yyyy-mm-dd hh:nn:ss zo', # Ruby time string in later versions
+      'yyyy-mm-dd hh:nn:ss tz', # Ruby time string for UTC in later versions
     ]
 
     # All tokens available for format construction. The token array is made of
