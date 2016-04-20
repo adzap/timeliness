@@ -260,7 +260,7 @@ parser will then not consider that a valid format. To remove a format
 
 Adding new formats is also simple
 
-  Timeliness.add_formats(:time, "d o'clock")
+  Timeliness.add_formats(:time, "h o'clock")
 
 Now "10 o'clock" will be a valid value.
 
