@@ -2,7 +2,7 @@ $:.unshift(File.expand_path('lib'))
 
 require 'benchmark'
 require 'time'
-require 'parsedate' unless RUBY_VERSION =~ /^1\.9\./
+require 'parsedate' if RUBY_VERSION =~ /^1\.8\./
 require 'timeliness'
 
 if defined?(JRUBY_VERSION)
