@@ -1,4 +1,4 @@
-# Timeliness
+# Timeliness [![build status](https://travis-ci.org/adzap/timeliness.svg)](https://travis-ci.org/adzap/timeliness)
 
 * Source:  http://github.com/adzap/timeliness
 * Bugs:    http://github.com/adzap/timeliness/issues
