@@ -1,3 +1,5 @@
+require 'threadsafe_attr'
+
 module Timeliness
   module Definitions
 
@@ -151,8 +153,9 @@ module Timeliness
     DuplicateFormat = Class.new(StandardError)
 
     class << self
+      extend ThreadsafeAttr
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components, :timezone_mapping
-      attr_reader :date_format_set, :time_format_set, :datetime_format_set
+      threadsafe_attr_accessor :date_format_set, :time_format_set, :datetime_format_set
 
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in
@@ -189,28 +192,28 @@ module Timeliness
       # Removes US date formats so that ambiguous dates are parsed as European format
       #
       def use_euro_formats
-        @date_format_set     = @euro_date_format_set
-        @datetime_format_set = @euro_datetime_format_set
+        self.date_format_set     = @euro_date_format_set
+        self.datetime_format_set = @euro_datetime_format_set
       end
 
       # Restores default to parse ambiguous dates as US format
       #
       def use_us_formats
-        @date_format_set     = @us_date_format_set
-        @datetime_format_set = @us_datetime_format_set
+        self.date_format_set     = @us_date_format_set
+        self.datetime_format_set = @us_datetime_format_set
       end
 
       def compile_formats
         @sorted_token_keys = nil
-        @time_format_set   = FormatSet.compile(time_formats)
+        self.time_format_set   = FormatSet.compile(time_formats)
 
         @us_date_format_set       = FormatSet.compile(date_formats)
         @us_datetime_format_set   = FormatSet.compile(datetime_formats)
         @euro_date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
         @euro_datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
 
-        @date_format_set     = @us_date_format_set
-        @datetime_format_set = @us_datetime_format_set
+        self.date_format_set     = @us_date_format_set
+        self.datetime_format_set = @us_datetime_format_set
       end
 
       def sorted_token_keys
@@ -223,24 +226,24 @@ module Timeliness
       def format_sets(type, string)
         case type
         when :date
-          [ @date_format_set, @datetime_format_set ]
+          [ date_format_set, datetime_format_set ]
         when :datetime
           if string.length < 11
-            [ @date_format_set, @datetime_format_set ]
+            [ date_format_set, datetime_format_set ]
           else
-            [ @datetime_format_set, @date_format_set ]
+            [ datetime_format_set, date_format_set ]
           end
         when :time
           if string.length < 11
-            [ @time_format_set ]
+            [ time_format_set ]
           else
-            [ @datetime_format_set, @time_format_set ]
+            [ datetime_format_set, time_format_set ]
           end
         else
           if string.length < 11
-            [ @date_format_set, @time_format_set, @datetime_format_set ]
+            [ date_format_set, time_format_set, datetime_format_set ]
           else
-            [ @datetime_format_set, @date_format_set, @time_format_set ]
+            [ datetime_format_set, date_format_set, time_format_set ]
           end
         end
       end
