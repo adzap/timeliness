@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = %q{http://github.com/adzap/timeliness}
   s.summary     = %q{Date/time parsing for the control freak.}
   s.description = %q{Fast date/time parser with customisable formats, timezone and I18n support.}
+  s.license     = "MIT"
 
   s.rubyforge_project = %q{timeliness}
 
