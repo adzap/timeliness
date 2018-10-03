@@ -1,21 +1,22 @@
 module ThreadsafeAttr
   def threadsafe_attr_accessor(*attrs)
     attrs.each do |attr|
-      reader attr
-      writer attr
+      storage_name = "#{name}.#{attr}".freeze
+      reader attr, storage_name
+      writer attr, storage_name
     end
   end
 
   private
-  def reader(attr)
+  def reader(attr, storage_name)
     define_method(attr) do
-      Thread.current["#{self.name}.#{attr}"]
+      Thread.current[storage_name]
     end
   end
 
-  def writer(attr)
+  def writer(attr, storage_name)
     define_method("#{attr}=") do |value|
-      Thread.current["#{self.name}.#{attr}"] = value
+      Thread.current[storage_name] = value
     end
   end
 end
