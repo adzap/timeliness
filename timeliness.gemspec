@@ -21,8 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'i18n'
 
-  s.files            = `git ls-files`.split("\n")
-  s.files            = `git ls-files`.split("\n") - %w{ .gitignore .rspec Gemfile Gemfile.lock }
+  s.files            = %w{README.rdoc LICENSE} + Dir.glob("lib/**/*", File::FNM_DOTMATCH).reject { |f| File.directory?(f) }
   s.extra_rdoc_files = ["README.rdoc", "CHANGELOG.rdoc"]
   s.require_paths    = ["lib"]
 end
