@@ -64,6 +64,10 @@ describe Timeliness::Parser do
       should_not_parse("2000-02-01 25:13:14")
     end
 
+    it 'should return nil for ISO 8601 string with invalid time part' do
+      should_not_parse("2000-02-01T25:13:14+02:00")
+    end
+
     context "string with zone offset value" do
       context "when current timezone is earler than string zone" do
         before(:all) do
@@ -456,6 +460,11 @@ describe Timeliness::Parser do
 
     it "should return nil for invalid time in array" do
       time = parser.make_time([2010,9,8,25,13,14])
+      expect(time).to be_nil
+    end
+
+    it "should return nil for invalid time in array with timezone" do
+      time = parser.make_time([2010,9,8,25,13,14,0,1])
       expect(time).to be_nil
     end
 

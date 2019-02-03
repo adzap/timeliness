@@ -28,6 +28,7 @@ module Timeliness
 
         value = create_time_in_zone(time_array[0..6].compact, zone || zone_option)
         value = shift_time_to_zone(value, zone_option) if zone
+        return nil unless value
 
         offset ? value + (value.utc_offset - offset) : value
       rescue ArgumentError, TypeError
