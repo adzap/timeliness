@@ -4,3 +4,4 @@ gemspec
 
 gem 'activesupport', '~> 4.2.0'
 gem 'byebug'
+gem 'rake'
