@@ -1,8 +1,12 @@
 language: ruby
-before_install: gem install bundler
+before_install:
+  - gem install bundler
 cache: bundler
 
 rvm:
+  - jruby
+  - truffleruby
+  - rbx-3
   - "2.3.8"
   - "2.4.5"
   - "2.5.3"
