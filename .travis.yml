@@ -1,7 +1,18 @@
 language: ruby
+before_install: gem install bundler
+cache: bundler
+
 rvm:
-  - 1.9.3
-  - ruby-head
-  - jruby-19mode
-  - rbx-19mode
+  - "2.3.8"
+  - "2.4.5"
+  - "2.5.3"
+  - "2.6.1"
+
 script: 'bundle exec rspec'
+
+notifications:
+  email:
+    recipients:
+      - adam.meehan@gmail.com
+    on_failure: change
+    on_success: never
