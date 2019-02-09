@@ -101,4 +101,16 @@ describe Timeliness::Definitions do
       definitions.use_us_formats
     end
   end
+
+  context "threadsafety" do
+    it "should allow threadsafe use of regional formats" do
+      eu_date = "30/06/2016"
+      us_date = "06/30/2016"
+      threads = []
+      threads << Thread.new { Timeliness.use_euro_formats; sleep(0.005); Timeliness.parse(eu_date) }
+      threads << Thread.new { sleep(0.001); Timeliness.use_us_formats; Timeliness.parse(us_date) }
+      threads.each { |t| t.join }
+      threads.each { |t| expect(t.value).to eql(Time.new(2016,06,30)) }
+    end
+  end
 end
