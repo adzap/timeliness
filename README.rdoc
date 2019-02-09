@@ -14,7 +14,7 @@ Date/time parser for Ruby with the following features:
 * I18n support (for months), if I18n gem loaded.
 * Fewer WTFs than Time/Date parse method.
 * Has no dependencies.
-* Works with Ruby MRI 1.8.*, 1.9.2, Rubinius and JRuby.
+* Works with Ruby MRI >= 2.2
 
 Extracted from the {validates_timeliness gem}[http://github.com/adzap/validates_timeliness], it has been rewritten cleaner and much faster. It's most suitable for when
 you need to control the parsing behaviour. It's faster than the Time/Date class parse methods, so it

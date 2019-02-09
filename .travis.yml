@@ -4,9 +4,9 @@ before_install:
 cache: bundler
 
 rvm:
-  - jruby
-  - truffleruby
-  - rbx-3
+  # - jruby
+  # - truffleruby
+  # - rbx-3
   - "2.3.8"
   - "2.4.5"
   - "2.5.3"
