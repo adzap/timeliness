@@ -2,6 +2,7 @@ require 'date'
 require 'forwardable'
 
 require 'timeliness/helpers'
+require 'timeliness/threadsafe_attr'
 require 'timeliness/definitions'
 require 'timeliness/format'
 require 'timeliness/format_set'

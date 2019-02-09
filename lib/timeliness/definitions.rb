@@ -1,5 +1,3 @@
-require 'threadsafe_attr'
-
 module Timeliness
   module Definitions
 
