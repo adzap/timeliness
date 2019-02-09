@@ -1,3 +1,16 @@
+= 0.3.10 - 2019-02-06
+* Fixed file permissions in gem build
+
+= 0.3.9 - 2019-02-03 [YANKED]
+* Fix for parsing invalid datetime string with valid timezone raising exception (lni_T)
+* Add license name in gemspec (Robert Reiz)
+* Fix typo in README format example
+
+= 0.3.8 - 2016-01-06
+* Add formats for standard Ruby string representations of Time
+* Updated specs to RSpec v3
+* Added some gem specific exception classes
+
 = 0.3.7 - 2012-10-03
 * Change to a hot switch between US and Euro formats without a compile.
 * Fix date parsing with bad month name defaulting to 1 if year and day present.
