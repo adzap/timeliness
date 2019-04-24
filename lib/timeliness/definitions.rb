@@ -246,6 +246,25 @@ module Timeliness
         end
       end
 
+      #
+      # Add new tokens for format construction.
+      # It expects a hash where the key is the token string,
+      #   and the value a token array.
+      # The token array is made of regexp and key for format
+      #   component mapping, if any.
+      #
+      # Ex.:
+      #   {
+      #     '%Y' => [ '\d{4}', :year ],
+      #     '%m' => [ '\d{2}', :month ],
+      #     '%d' => [ '\d{2}', :day ]
+      #   }
+      #
+      def add_format_tokens(format_token)
+        @format_tokens.merge!(format_token)
+
+        compile_formats
+      end
     end
   end
 end

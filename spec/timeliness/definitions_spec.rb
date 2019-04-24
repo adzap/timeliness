@@ -113,4 +113,17 @@ describe Timeliness::Definitions do
       threads.each { |t| expect(t.value).to eql(Time.new(2016,06,30)) }
     end
   end
+
+  context "add_format_tokens" do
+    it "should allow add custom format tokens" do
+      expect(parser._parse('01/02/2000', :date, format: '%d/%m/%Y')).to be_nil
+      definitions.add_format_tokens({
+        '%Y' => [ '\d{4}', :year ],
+        '%m' => [ '\d{2}', :month ],
+        '%d' => [ '\d{2}', :day ]
+      })
+
+      expect(parser._parse('01/02/2000', :date, format: '%d/%m/%Y')).to eq [2000,2,1,nil,nil,nil,nil,nil]
+    end
+  end
 end
