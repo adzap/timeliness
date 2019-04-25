@@ -228,7 +228,7 @@ Here is what each format token means:
 All other characters are considered literal. For the technically minded, these formats are compiled
 into a single regular expression
 
-To see all defined formats look at the {source code}[http://github.com/adzap/timeliness/tree/master/lib/timeliness/formats.rb].
+To see all defined formats look at the {source code}[http://github.com/adzap/timeliness/tree/master/lib/timeliness/definitions.rb].
 
 
 == Settings
@@ -277,6 +277,20 @@ an existing format, you can include the before option like so
 
 Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves you adding a new one
 and deleting an old one to get it to work.
+
+
+=== Customizing Format Tokens ===
+
+Eventually you want to use Timeliness on an environment where you already use the tokens recognized by `strptime`.
+To add those, or any other token you want, you can use:
+
+```
+Timeliness.add_format_tokens({
+  '%Y' => [ '\d{4}', :year ],
+  '%m' => [ '\d{2}', :month ],
+  '%d' => [ '\d{2}', :day ]
+})
+```
 
 
 === Ambiguous Year
