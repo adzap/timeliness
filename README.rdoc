@@ -281,15 +281,16 @@ and deleting an old one to get it to work.
 
 === Customizing Format Tokens ===
 
-Eventually you want to use Timeliness on an environment where you already use the tokens recognized by `strptime`.
-To add those, or any other token you want, you can use:
+Eventually, you might want to use Timeliness in a project that uses `strptime`.
+To add the format tokens used in that, or any other token you want, you can use:
 
 ```
-Timeliness.add_format_tokens({
+Timeliness.add_format_tokens(
   '%Y' => [ '\d{4}', :year ],
   '%m' => [ '\d{2}', :month ],
   '%d' => [ '\d{2}', :day ]
-})
+)
+Timeliness.parse('2019-04-25', format: '%Y-%m-%d')
 ```
 
 
