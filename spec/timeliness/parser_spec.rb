@@ -1,4 +1,19 @@
 describe Timeliness::Parser do
+  around(:all) do |example|
+    current_default = Timeliness.default_timezone
+    current_zone = Time.zone
+    example.call
+    Time.zone = current_zone
+    Timeliness.default_timezone = current_default
+  end
+
+  def self.timezone_settings(zone: nil, output: nil)
+    before do
+      Time.zone = zone if zone
+      Timeliness.default_timezone = output if output 
+    end
+  end
+
   before(:all) do
     Timecop.freeze(2010,1,1,0,0,0)
   end
@@ -70,10 +85,7 @@ describe Timeliness::Parser do
 
     context "string with zone offset value" do
       context "when current timezone is earler than string zone" do
-        before(:all) do
-          Timeliness.default_timezone = :current
-          Time.zone = 'Australia/Melbourne'
-        end
+        timezone_settings zone: 'Australia/Melbourne', output: :current
 
         it 'should return value shifted by positive offset in default timezone' do
           value = parse("2000-06-01T12:00:00+02:00")
@@ -86,18 +98,10 @@ describe Timeliness::Parser do
           expect(value).to eq Time.zone.local(2000,6,1,23,0,0)
           expect(value.utc_offset).to eq 10.hours
         end
-
-        after(:all) do
-          Time.zone = nil
-          Timeliness.default_timezone = :local
-        end
       end
 
       context "when current timezone is later than string zone" do
-        before(:all) do
-          Timeliness.default_timezone = :current
-          Time.zone = 'America/Phoenix'
-        end
+        timezone_settings zone: 'America/Phoenix', output: :current
 
         it 'should return value shifted by positive offset in default timezone' do
           value = parse("2000-06-01T12:00:00+02:00")
@@ -110,18 +114,11 @@ describe Timeliness::Parser do
           expect(value).to eq Time.zone.local(2000,6,1,6,0,0)
           expect(value.utc_offset).to eq -7.hours
         end
-
-        after(:all) do
-          Time.zone = nil
-          Timeliness.default_timezone = :local
-        end
       end
     end
 
     context "string with zone abbreviation" do
-      before(:all) do
-        Time.zone = 'Australia/Melbourne'
-      end
+      timezone_settings zone: 'Australia/Melbourne'
 
       it 'should return value using string zone adjusted to default :local timezone' do
         Timeliness.default_timezone = :local
@@ -147,10 +144,7 @@ describe Timeliness::Parser do
     end
 
     context "string with zulu time abbreviation 'Z'" do
-      before(:all) do
-        Timeliness.default_timezone = :current
-        Time.zone = 'Melbourne'
-      end
+      timezone_settings zone: 'Australia/Melbourne'
       
       it 'should return value using string zone adjusted to default :current timezone' do
         Timeliness.default_timezone = :current
@@ -158,11 +152,6 @@ describe Timeliness::Parser do
         value = parse("2000-06-01T12:00:00Z")
         expect(value).to eq Time.zone.local(2000,6,1,22,0,0)
         expect(value.utc_offset).to eq 10.hours
-      end
-
-      after(:all) do
-        Time.zone = nil
-        Timeliness.default_timezone = :local
       end
     end
 
@@ -242,8 +231,9 @@ describe Timeliness::Parser do
       end
 
       context ":current" do
+        timezone_settings zone: 'Adelaide'
+
         it "should return time object in current timezone" do
-          Time.zone = 'Adelaide'
           time = parse("2000-06-01 12:13:14", :datetime, :zone => :current)
           expect(time.utc_offset).to eq 9.5.hours
         end
@@ -485,18 +475,10 @@ describe Timeliness::Parser do
     end
 
     context "default timezone" do
-      before do
-        @default_timezone = Timeliness.default_timezone
-      end
-
       it "should be used if no zone value" do
         Timeliness.default_timezone = :utc
         time = parser.make_time([2000,6,1,12,0,0])
         expect(time.utc_offset).to eq 0
-      end
-
-      after do
-       Timeliness.default_timezone = @default_timezone
       end
     end
 
