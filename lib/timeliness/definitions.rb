@@ -75,11 +75,12 @@ module Timeliness
       'ddd, dd mmm yyyy hh:nn:ss tz', # RFC 822
       'ddd, dd mmm yyyy hh:nn:ss zo', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
-      'yyyy-mm-ddThh:nn:ssZ', # ISO 8601 without zone offset
+      'yyyy-mm-ddThh:nn:ss', # ISO 8601
       'yyyy-mm-ddThh:nn:sszo', # ISO 8601 with zone offset
+      'yyyy-mm-ddThh:nn:sszt', # ISO 8601 with 'Zulu time' (i.e. Z) UTC zone designator
       'yyyy-mm-ddThh:nn:ss.u', # ISO 8601 with usec
-      'yyyy-mm-ddThh:nn:ss.uZ', # ISO 8601 with usec and no zone offset
       'yyyy-mm-ddThh:nn:ss.uzo', # ISO 8601 with usec and offset
+      'yyyy-mm-ddThh:nn:ss.uzt', # ISO 8601 with usec and 'Zulu time' (i.e. Z) UTC zone designator 
       'yyyy-mm-dd hh:nn:ss zo', # Ruby time string in later versions
       'yyyy-mm-dd hh:nn:ss tz', # Ruby time string for UTC in later versions
     ]
@@ -106,6 +107,7 @@ module Timeliness
       'ampm' => [ '[aApP]\.?[mM]\.?', :meridian ],
       'zo'   => [ '[+-]\d{2}:?\d{2}', :offset ],
       'tz'   => [ '[A-Z]{1,5}', :zone ],
+      'zt'   => [ '[Z]{1}',  :zulu],
       '_'    => [ '\s?' ]
     }
 
@@ -128,6 +130,7 @@ module Timeliness
       :usec     => [ 6, 'microseconds(usec)'],
       :offset   => [ 7, 'offset_in_seconds(offset)'],
       :zone     => [ 7, 'zone'],
+      :zulu     => [ 7, 'offset_in_seconds("00:00")'],
       :meridian => [ nil ]
     }
 

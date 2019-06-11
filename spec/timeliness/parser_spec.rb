@@ -144,9 +144,25 @@ describe Timeliness::Parser do
         expect(value).to eq Time.use_zone('Perth') { Time.zone.local(2000,6,1,18,0,0) }
         expect(value.utc_offset).to eq 8.hours
       end
+    end
+
+    context "string with zulu time abbreviation 'Z'" do
+      before(:all) do
+        Timeliness.default_timezone = :current
+        Time.zone = 'Melbourne'
+      end
+      
+      it 'should return value using string zone adjusted to default :current timezone' do
+        Timeliness.default_timezone = :current
+
+        value = parse("2000-06-01T12:00:00Z")
+        expect(value).to eq Time.zone.local(2000,6,1,22,0,0)
+        expect(value.utc_offset).to eq 10.hours
+      end
 
       after(:all) do
         Time.zone = nil
+        Timeliness.default_timezone = :local
       end
     end
 

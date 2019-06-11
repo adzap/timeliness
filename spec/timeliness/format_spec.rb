@@ -55,8 +55,16 @@ describe Timeliness::Format do
       expect(format_for('yyyy-mm-dd hh:nn:ss.u zo').process('2001', '02', '03', '04', '05', '06', '99', '+10:00')).to eq [2001,2,3,4,5,6,990000,36000]
     end
 
+    it "should define method which outputs datetime array with zone offset" do
+      expect(format_for('yyyy-mm-dd hh:nn:ss.u zo').process('2001', '02', '03', '04', '05', '06', '99', '+10:00')).to eq [2001,2,3,4,5,6,990000,36000]
+    end
+
     it "should define method which outputs datetime array with timezone string" do
       expect(format_for('yyyy-mm-dd hh:nn:ss.u tz').process('2001', '02', '03', '04', '05', '06', '99', 'EST')).to eq [2001,2,3,4,5,6,990000,'EST']
+    end
+
+    it "should define method which outputs datetime array with 0 offset for zulu time ('Z')" do
+      expect(format_for('yyyy-mm-dd hh:nn:ss.uzt').process('2001', '02', '03', '04', '05', '06', '99', 'Z')).to eq [2001,2,3,4,5,6,990000,0]
     end
 
     context "with long month" do
