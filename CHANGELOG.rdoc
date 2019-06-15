@@ -1,3 +1,8 @@
+= 0.4.2 - 2019-06-15
+* Fixed thread safe issue that forced you to use one of the date format methods e.g. `use_euro_formats`
+  to initialize the format sets in each new thread. Now a new thread will default to the global default (main thread).
+* Add `Timeliness.ambiguous_date_format` config setting (:us or :euro) to control global default for date format sets. 
+
 = 0.4.1 - 2019-06-11
 * Add format for ISO 8601 with usec and 'Z' UTC zone offset (jartek)
 * Fix ISO 8601 parsing bug where Z was not recognised as UTC
