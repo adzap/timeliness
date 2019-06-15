@@ -155,9 +155,7 @@ module Timeliness
     DuplicateFormat = Class.new(StandardError)
 
     class << self
-      extend ThreadsafeAttr
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components, :timezone_mapping
-      threadsafe_attr_accessor :date_format_set, :time_format_set, :datetime_format_set
 
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in
@@ -191,31 +189,47 @@ module Timeliness
         compile_formats
       end
 
+      def current_date_format=(value)
+        Thread.current["Timeliness.current_date_format"] = value
+      end
+
+      def current_date_format
+        Thread.current.fetch("Timeliness.current_date_format") {
+          self.current_date_format = @current_date_format
+        }
+      end
+
+      def date_format_set
+        instance_variable_get(:"@#{current_date_format}_date_format_set")
+      end
+
+      def datetime_format_set
+        instance_variable_get(:"@#{current_date_format}_datetime_format_set")
+      end
+
       # Removes US date formats so that ambiguous dates are parsed as European format
       #
       def use_euro_formats
-        self.date_format_set     = @euro_date_format_set
-        self.datetime_format_set = @euro_datetime_format_set
+        self.current_date_format = :euro
       end
 
       # Restores default to parse ambiguous dates as US format
       #
       def use_us_formats
-        self.date_format_set     = @us_date_format_set
-        self.datetime_format_set = @us_datetime_format_set
+        self.current_date_format = :us
       end
 
       def compile_formats
-        @sorted_token_keys = nil
-        self.time_format_set   = FormatSet.compile(time_formats)
+        @sorted_token_keys        = nil
+        @current_date_format      = :us
 
+        self.current_date_format  = @current_date_format
+
+        @time_format_set          = FormatSet.compile(time_formats)
         @us_date_format_set       = FormatSet.compile(date_formats)
         @us_datetime_format_set   = FormatSet.compile(datetime_formats)
         @euro_date_format_set     = FormatSet.compile(date_formats.select { |format| US_FORMAT_REGEXP !~ format })
         @euro_datetime_format_set = FormatSet.compile(datetime_formats.select { |format| US_FORMAT_REGEXP !~ format })
-
-        self.date_format_set     = @us_date_format_set
-        self.datetime_format_set = @us_datetime_format_set
       end
 
       def sorted_token_keys
