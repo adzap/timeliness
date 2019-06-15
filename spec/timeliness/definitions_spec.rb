@@ -102,13 +102,13 @@ describe Timeliness::Definitions do
     end
   end
 
-  context "threadsafety" do
+  context "thread safe date format switching" do
     let(:ambiguous_date) { "01/02/2000" }
 
-    it "should allow threadsafe use of regional formats" do
+    it "should allow indepdent regional format control in current thread" do
       threads = {
         euro: Thread.new { Timeliness.use_euro_formats; sleep(0.005); Timeliness.parse(ambiguous_date) },
-        us: Thread.new { sleep(0.001); Timeliness.use_us_formats; Timeliness.parse(ambiguous_date) }
+        us:   Thread.new { sleep(0.001); Timeliness.use_us_formats; Timeliness.parse(ambiguous_date) }
       }
       threads.values.each { |t| t.join }
 
@@ -116,9 +116,10 @@ describe Timeliness::Definitions do
       expect(threads[:us].value).to eql(Time.new(2000,1,2))
     end
 
-    it 'should use default regional formats to use default ambiguous date format' do
+    it 'should use default regional format in new threads' do
       thread = Thread.new { sleep(0.001); Timeliness.parse(ambiguous_date) }
       thread.join
+
       expect(thread.value).to eql(Time.new(2000,1,2))
     end
   end
