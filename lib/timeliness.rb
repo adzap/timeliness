@@ -13,7 +13,7 @@ module Timeliness
     extend Forwardable
     def_delegators Parser, :parse, :_parse
     def_delegators Definitions, :add_formats, :remove_formats, :use_us_formats, :use_euro_formats
-    attr_accessor :default_timezone, :date_for_time_type, :ambiguous_year_threshold
+    attr_accessor :default_timezone, :date_for_time_type, :ambiguous_date_format, :ambiguous_year_threshold
   end
 
   # Default timezone. Options:
@@ -29,6 +29,12 @@ module Timeliness
   # Set the default date part for a time type values.
   #
   self.date_for_time_type = lambda { Time.now }
+
+  # Default parsing of ambiguous date formats. Options:
+  #   - :us (default, 01/02/2000 = 2nd of January 2000)
+  #   - :euro (01/02/2000 = 1st of February 2000)
+  #
+  self.ambiguous_date_format = :us
 
   # Set the threshold value for a two digit year to be considered last century
   #

@@ -236,7 +236,7 @@ To see all defined formats look at the {source code}[http://github.com/adzap/tim
 === US/Euro Formats
 
 The perennial problem for non-US developers or applications not primarily for the US, is the US date
-format of m/d/yy. This is ambiguous with the European format of d/m/yy. By default the gem uses the
+format of m/d/yy. This is can be ambiguous with the European format of d/m/yy. By default the gem uses the
 US formats as this is the Ruby default
 when it does date interpretation.
 
@@ -249,6 +249,13 @@ Now '01/02/2000' will be parsed as 1st February 2000, instead of 2nd January 200
 You can switch back to US formats with
 
   Timeliness.use_us_formats
+
+==== Thread Safety
+
+The switching of formats is threadsafe (since v0.4.0), however for each new thread the format default will be 
+the gem default, being the US format. To control default for your app and each new thread, use the config
+
+  Timeliness.ambiguous_date_format = :euro
 
 
 === Customising Formats

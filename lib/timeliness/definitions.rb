@@ -222,7 +222,7 @@ module Timeliness
 
       def compile_formats
         @sorted_token_keys        = nil
-        @current_date_format      = :us
+        @current_date_format      = Timeliness.ambiguous_date_format
 
         self.current_date_format  = @current_date_format
 
