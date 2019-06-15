@@ -156,7 +156,7 @@ module Timeliness
 
     class << self
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components, :timezone_mapping
-      attr_accessor :time_format_set, :date_format_set, :datetime_format_set
+      attr_reader :time_format_set, :date_format_set, :datetime_format_set
 
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in
