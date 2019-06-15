@@ -156,6 +156,7 @@ module Timeliness
 
     class << self
       attr_accessor :time_formats, :date_formats, :datetime_formats, :format_tokens, :format_components, :timezone_mapping
+      attr_accessor :time_format_set, :date_format_set, :datetime_format_set
 
       # Adds new formats. Must specify format type and can specify a :before
       # option to nominate which format the new formats should be inserted in
@@ -199,10 +200,12 @@ module Timeliness
         }
       end
 
+      # Get date format set for using current thread format setting
       def date_format_set
         instance_variable_get(:"@#{current_date_format}_date_format_set")
       end
 
+      # Get datetime format set for using current thread format setting
       def datetime_format_set
         instance_variable_get(:"@#{current_date_format}_datetime_format_set")
       end
