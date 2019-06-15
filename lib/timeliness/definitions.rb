@@ -234,7 +234,7 @@ module Timeliness
       end
 
       def sorted_token_keys
-        @sorted_token_keys ||= format_tokens.keys.sort {|a,b| a.size <=> b.size }.reverse
+        @sorted_token_keys ||= format_tokens.keys.sort_by(&:size).reverse
       end
 
       # Returns format for type and other possible matching format set based on type
