@@ -195,9 +195,7 @@ module Timeliness
       end
 
       def current_date_format
-        Thread.current.fetch("Timeliness.current_date_format") {
-          self.current_date_format = @current_date_format
-        }
+        Thread.current["Timeliness.current_date_format"] ||= @current_date_format
       end
 
       # Get date format set for using current thread format setting
