@@ -208,13 +208,13 @@ module Timeliness
         instance_variable_get(:"@#{current_date_format}_datetime_format_set")
       end
 
-      # Removes US date formats so that ambiguous dates are parsed as European format
+      # Use date formats that return ambiguous dates parsed in European format
       #
       def use_euro_formats
         self.current_date_format = :euro
       end
 
-      # Restores default to parse ambiguous dates as US format
+      # Use date formats that return ambiguous dates parsed as US format
       #
       def use_us_formats
         self.current_date_format = :us
