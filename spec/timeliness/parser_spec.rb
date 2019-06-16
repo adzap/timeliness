@@ -1,17 +1,15 @@
 describe Timeliness::Parser do
-  around(:all) do |example|
-    current_default = Timeliness.default_timezone
-    current_zone = Time.zone
-    example.call
-    Time.zone = current_zone
-    Timeliness.default_timezone = current_default
-  end
-
   def self.timezone_settings(zone: nil, output: nil)
     before do
       Time.zone = zone if zone
-      Timeliness.default_timezone = output if output 
+      Timeliness.configuration.default_timezone = output if output 
     end
+  end
+
+  around(:all) do |example|
+    current_zone = Time.zone
+    example.call
+    Time.zone = current_zone
   end
 
   before(:all) do
@@ -121,22 +119,25 @@ describe Timeliness::Parser do
       timezone_settings zone: 'Australia/Melbourne'
 
       it 'should return value using string zone adjusted to default :local timezone' do
-        Timeliness.default_timezone = :local
+        Timeliness.configuration.default_timezone = :local
+
         value = parse("Thu, 01 Jun 2000 03:00:00 MST")
         expect(value).to eq Time.utc(2000,6,1,10,0,0).getlocal
         expect(value.utc_offset).to eq Time.mktime(2000, 6, 1, 10, 0, 0).utc_offset
       end
 
       it 'should return value using string zone adjusted to default :current timezone' do
-        Timeliness.default_timezone = :current
+        Timeliness.configuration.default_timezone = :current
         Time.zone = 'Adelaide'
+
         value = parse("Thu, 01 Jun 2000 03:00:00 MST")
         expect(value).to eq Time.zone.local(2000,6,1,19,30,0)
         expect(value.utc_offset).to eq 9.5.hours
       end
 
       it 'should return value using string zone adjusted to :zone option string timezone' do
-        Timeliness.default_timezone = :local
+        Timeliness.configuration.default_timezone = :local
+
         value = parse("Thu, 01 Jun 2000 03:00:00 MST", :zone => 'Perth')
         expect(value).to eq Time.use_zone('Perth') { Time.zone.local(2000,6,1,18,0,0) }
         expect(value.utc_offset).to eq 8.hours
@@ -147,7 +148,7 @@ describe Timeliness::Parser do
       timezone_settings zone: 'Australia/Melbourne'
       
       it 'should return value using string zone adjusted to default :current timezone' do
-        Timeliness.default_timezone = :current
+        Timeliness.configuration.default_timezone = :current
 
         value = parse("2000-06-01T12:00:00Z")
         expect(value).to eq Time.zone.local(2000,6,1,22,0,0)
@@ -276,22 +277,16 @@ describe Timeliness::Parser do
 
     context "for time type" do
       context "with date from date_for_time_type" do
-        before do
-          @original = Timeliness.date_for_time_type
-        end
-
         it 'should return date array' do
-          Timeliness.date_for_time_type = [2010,1,1]
+          Timeliness.configuration.date_for_time_type = [2010,1,1]
+
           expect(parse('12:13:14', :time)).to eq Time.local(2010,1,1,12,13,14)
         end
 
         it 'should return date array evaluated lambda' do
-          Timeliness.date_for_time_type = lambda { Time.local(2010,2,1) }
-          expect(parse('12:13:14', :time)).to eq Time.local(2010,2,1,12,13,14)
-        end
+          Timeliness.configuration.date_for_time_type = lambda { Time.local(2010,2,1) }
 
-        after do
-          Timeliness.date_for_time_type = @original
+          expect(parse('12:13:14', :time)).to eq Time.local(2010,2,1,12,13,14)
         end
       end
 
@@ -303,7 +298,6 @@ describe Timeliness::Parser do
 
       context "with :zone option" do
         before(:all) do
-          Timecop.return
           @current_tz = ENV['TZ']
           ENV['TZ'] = 'Australia/Melbourne'
           Timecop.freeze(2010,1,1,0,0,0)
@@ -317,7 +311,6 @@ describe Timeliness::Parser do
         end
 
         after(:all) do
-          Timecop.return
           ENV['TZ'] = @current_tz
           Timecop.freeze(2010,1,1,0,0,0)
         end
@@ -442,13 +435,12 @@ describe Timeliness::Parser do
       end
 
       it "should allow custom threshold" do
-        default = Timeliness.ambiguous_year_threshold
-        Timeliness.ambiguous_year_threshold = 40
+        Timeliness.configuration.ambiguous_year_threshold = 40
+
         time_array = parser._parse('01-02-39', :date)
         expect(time_array).to eq [2039,2,1,nil,nil,nil,nil,nil]
         time_array = parser._parse('01-02-40', :date)
         expect(time_array).to eq [1940,2,1,nil,nil,nil,nil,nil]
-        Timeliness.ambiguous_year_threshold = default
       end
     end
   end
@@ -476,7 +468,8 @@ describe Timeliness::Parser do
 
     context "default timezone" do
       it "should be used if no zone value" do
-        Timeliness.default_timezone = :utc
+        Timeliness.configuration.default_timezone = :utc
+
         time = parser.make_time([2000,6,1,12,0,0])
         expect(time.utc_offset).to eq 0
       end
@@ -518,7 +511,7 @@ describe Timeliness::Parser do
 
     context "with no options" do
       it 'should return date_for_time_type values with no options' do
-        dummy_date = Timeliness.date_for_time_type.call
+        dummy_date = Timeliness.configuration.date_for_time_type.call
         expect(current_date).to eq [ dummy_date.year, dummy_date.month, dummy_date.day ]
       end
     end

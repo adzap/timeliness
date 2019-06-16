@@ -34,4 +34,8 @@ I18n.available_locales = ['en', 'es']
 RSpec.configure do |c|
   c.mock_with :rspec
   c.include TimelinessHelpers
+
+  c.after do
+    Timeliness.configuration = Timeliness::Configuration.new
+  end
 end

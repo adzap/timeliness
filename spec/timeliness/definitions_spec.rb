@@ -1,5 +1,4 @@
 describe Timeliness::Definitions do
-
   context "add_formats" do
     before do
       @default_formats = definitions.time_formats.dup
@@ -106,10 +105,8 @@ describe Timeliness::Definitions do
     let(:ambiguous_date) { "01/02/2000" }
 
     around do |example|
-      current = Timeliness.ambiguous_date_format
       Timeliness::Definitions.compile_formats
       example.call
-      Timeliness.ambiguous_date_format = current
       Timeliness::Definitions.compile_formats
     end
 
@@ -125,7 +122,7 @@ describe Timeliness::Definitions do
     end
 
     it 'should use default format in new threads' do
-      Timeliness.ambiguous_date_format = :euro
+      Timeliness.configuration.ambiguous_date_format = :euro
 
       thread = Thread.new { sleep(0.001); Timeliness.parse(ambiguous_date) }
       thread.join
