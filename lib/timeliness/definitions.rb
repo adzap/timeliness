@@ -195,7 +195,7 @@ module Timeliness
       end
 
       def current_date_format
-        Thread.current["Timeliness.current_date_format"] ||= @current_date_format
+        Thread.current["Timeliness.current_date_format"] ||= Timeliness.ambiguous_date_format
       end
 
       # Get date format set for using current thread format setting
@@ -222,9 +222,6 @@ module Timeliness
 
       def compile_formats
         @sorted_token_keys        = nil
-        @current_date_format      = Timeliness.ambiguous_date_format
-
-        self.current_date_format  = @current_date_format
 
         @time_format_set          = FormatSet.compile(time_formats)
         @us_date_format_set       = FormatSet.compile(date_formats)
