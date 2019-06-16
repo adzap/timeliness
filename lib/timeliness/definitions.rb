@@ -195,7 +195,7 @@ module Timeliness
       end
 
       def current_date_format
-        Thread.current["Timeliness.current_date_format"] ||= Timeliness.ambiguous_date_format
+        Thread.current["Timeliness.current_date_format"] ||= Timeliness.configuration.ambiguous_date_format
       end
 
       # Get date format set for using current thread format setting

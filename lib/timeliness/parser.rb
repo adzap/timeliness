@@ -105,7 +105,7 @@ module Timeliness
       end
 
       def shift_time_to_zone(time, zone=nil)
-        zone ||= Timeliness.default_timezone
+        zone ||= Timeliness.configuration.default_timezone
         case zone
         when :utc, :local
           time.send("get#{zone}")
@@ -117,7 +117,7 @@ module Timeliness
       end
 
       def create_time_in_zone(time_array, zone=nil)
-        zone ||= Timeliness.default_timezone
+        zone ||= Timeliness.configuration.default_timezone
         case zone
         when :utc, :local
           time_with_datetime_fallback(zone, *time_array)
@@ -153,11 +153,13 @@ module Timeliness
       end
 
       def evaluate_date_for_time_type
-        case Timeliness.date_for_time_type
+        date_for_time_type = Timeliness.configuration.date_for_time_type
+
+        case date_for_time_type
         when Array
-          Timeliness.date_for_time_type
+          date_for_time_type
         when Proc
-          v = Timeliness.date_for_time_type.call
+          v = date_for_time_type.call
           [v.year, v.month, v.day]
         end
       end

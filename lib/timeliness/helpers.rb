@@ -15,7 +15,7 @@ module Timeliness
     def unambiguous_year(year)
       if year.length <= 2
         century = Time.now.year.to_s[0..1].to_i
-        century -= 1 if year.to_i >= Timeliness.ambiguous_year_threshold
+        century -= 1 if year.to_i >= Timeliness.configuration.ambiguous_year_threshold
         year = "#{century}#{year.rjust(2,'0')}"
       end
       year.to_i
