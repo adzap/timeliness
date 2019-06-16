@@ -1,3 +1,8 @@
+= 0.4.3 - 2019-06-16
+* Fixed `Timeliness.ambiguous_date_format` being used in new threads if custom value set
+* Moved all config from Timeliness to new Configuration class. Delegated all
+  old config methods to Timeliness.configuration instance.
+
 = 0.4.2 - 2019-06-15
 * Fixed thread safe issue that forced you to use one of the date format methods e.g. `use_euro_formats`
   to initialize the format sets in each new thread. Now a new thread will default to the global default (main thread).
