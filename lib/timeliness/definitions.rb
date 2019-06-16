@@ -199,11 +199,13 @@ module Timeliness
       end
 
       # Get date format set for using current thread format setting
+      #
       def date_format_set
         instance_variable_get(:"@#{current_date_format}_date_format_set")
       end
 
       # Get datetime format set for using current thread format setting
+      #
       def datetime_format_set
         instance_variable_get(:"@#{current_date_format}_datetime_format_set")
       end
