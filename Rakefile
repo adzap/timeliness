@@ -23,4 +23,4 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 desc 'Default: run specs.'
-task :default => :spec
+task default: :spec

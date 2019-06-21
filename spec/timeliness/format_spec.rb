@@ -73,8 +73,8 @@ describe Timeliness::Format do
       context "with I18n loaded" do
         before(:all) do
           I18n.locale = :es
-          I18n.backend.store_translations :es, :date => { :month_names => %w{ ~ Enero Febrero Marzo } }
-          I18n.backend.store_translations :es, :date => { :abbr_month_names => %w{ ~ Ene Feb Mar } }
+          I18n.backend.store_translations :es, date: { month_names: %w{ ~ Enero Febrero Marzo } }
+          I18n.backend.store_translations :es, date: { abbr_month_names: %w{ ~ Ene Feb Mar } }
         end
 
         it 'should parse abbreviated month for current locale to correct value' do

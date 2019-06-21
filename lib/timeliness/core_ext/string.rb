@@ -3,7 +3,7 @@ class String
   # Form can be either :utc (default) or :local.
   def to_time(form = :utc)
     return nil if self.blank?
-    Timeliness::Parser.parse(self, :datetime, :zone => form)
+    Timeliness::Parser.parse(self, :datetime, zone: form)
   end
 
   def to_date

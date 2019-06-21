@@ -21,13 +21,13 @@ describe Timeliness::Definitions do
 
     context "with :before option" do
       it "should add new format with higher precedence" do
-        definitions.add_formats(:time, "ss:hh:nn", :before => 'hh:nn:ss')
+        definitions.add_formats(:time, "ss:hh:nn", before: 'hh:nn:ss')
         time_array = parser._parse('59:23:58', :time)
         expect(time_array).to eq [nil,nil,nil,23,58,59,nil,nil]
       end
 
       it "should raise error if :before format does not exist" do
-        expect { definitions.add_formats(:time, "ss:hh:nn", :before => 'nn:hh:ss') }.to raise_error(Timeliness::Definitions::FormatNotFound)
+        expect { definitions.add_formats(:time, "ss:hh:nn", before: 'nn:hh:ss') }.to raise_error(Timeliness::Definitions::FormatNotFound)
       end
     end
 

@@ -138,7 +138,7 @@ describe Timeliness::Parser do
       it 'should return value using string zone adjusted to :zone option string timezone' do
         Timeliness.configuration.default_timezone = :local
 
-        value = parse("Thu, 01 Jun 2000 03:00:00 MST", :zone => 'Perth')
+        value = parse("Thu, 01 Jun 2000 03:00:00 MST", zone: 'Perth')
         expect(value).to eq Time.use_zone('Perth') { Time.zone.local(2000,6,1,18,0,0) }
         expect(value.utc_offset).to eq 8.hours
       end
@@ -196,7 +196,7 @@ describe Timeliness::Parser do
 
     context "with :now option" do
       it 'should use date parts if string does not specify' do
-        time = parse("12:13:14", :now => Time.local(2010,1,1))
+        time = parse("12:13:14", now: Time.local(2010,1,1))
         expect(time).to eq Time.local(2010,1,1,12,13,14)
       end
     end
@@ -211,23 +211,23 @@ describe Timeliness::Parser do
     context "with :zone option" do
       context ":utc" do
         it "should return time object in utc timezone" do
-          time = parse("2000-06-01 12:13:14", :datetime, :zone => :utc)
+          time = parse("2000-06-01 12:13:14", :datetime, zone: :utc)
           expect(time.utc_offset).to eq 0
         end
 
         it 'should return nil for partial invalid time component' do
-          expect(parse("2000-06-01 12:60", :datetime, :zone => :utc)).to be_nil
+          expect(parse("2000-06-01 12:60", :datetime, zone: :utc)).to be_nil
         end
       end
 
       context ":local" do
         it "should return time object in local system timezone" do
-          time = parse("2000-06-01 12:13:14", :datetime, :zone => :local)
+          time = parse("2000-06-01 12:13:14", :datetime, zone: :local)
           expect(time.utc_offset).to eq Time.mktime(2000, 6, 1, 12, 13, 14).utc_offset
         end
 
         it 'should return nil for partial invalid time component' do
-          expect(parse("2000-06-01 12:60", :datetime, :zone => :local)).to be_nil
+          expect(parse("2000-06-01 12:60", :datetime, zone: :local)).to be_nil
         end
       end
 
@@ -235,23 +235,23 @@ describe Timeliness::Parser do
         timezone_settings zone: 'Adelaide'
 
         it "should return time object in current timezone" do
-          time = parse("2000-06-01 12:13:14", :datetime, :zone => :current)
+          time = parse("2000-06-01 12:13:14", :datetime, zone: :current)
           expect(time.utc_offset).to eq 9.5.hours
         end
 
         it 'should return nil for partial invalid time component' do
-          expect(parse("2000-06-01 12:60", :datetime, :zone => :current)).to be_nil
+          expect(parse("2000-06-01 12:60", :datetime, zone: :current)).to be_nil
         end
       end
 
       context "named zone" do
         it "should return time object in the timezone" do
-          time = parse("2000-06-01 12:13:14", :datetime, :zone => 'London')
+          time = parse("2000-06-01 12:13:14", :datetime, zone: 'London')
           expect(time.utc_offset).to eq 1.hour
         end
 
         it 'should return nil for partial invalid time component' do
-          expect(parse("2000-06-01 12:60", :datetime, :zone => 'London')).to be_nil
+          expect(parse("2000-06-01 12:60", :datetime, zone: 'London')).to be_nil
         end
       end
 
@@ -259,17 +259,17 @@ describe Timeliness::Parser do
         it 'should output message' do
           expect {
             expect(Time).to receive(:zone).and_raise(NoMethodError.new("undefined method `zone' for Time:Class"))
-            parse("2000-06-01 12:13:14", :zone => :current)
+            parse("2000-06-01 12:13:14", zone: :current)
           }.to raise_error(Timeliness::Parser::MissingTimezoneSupport)
 
           expect {
             expect(Time).to receive(:current).and_raise(NoMethodError.new("undefined method `current' for Time:Class"))
-            parse("12:13:14", :zone => :current)
+            parse("12:13:14", zone: :current)
           }.to raise_error(Timeliness::Parser::MissingTimezoneSupport)
 
           expect {
             expect(Time).to receive(:use_zone).and_raise(NoMethodError.new("undefined method `use_zone' for Time:Class"))
-            parse("2000-06-01 12:13:14", :zone => 'London')
+            parse("2000-06-01 12:13:14", zone: 'London')
           }.to raise_error(Timeliness::Parser::MissingTimezoneSupport)
         end
       end
@@ -292,7 +292,7 @@ describe Timeliness::Parser do
 
       context "with :now option" do
         it 'should use date from :now' do
-          expect(parse('12:13:14', :time, :now => Time.local(2010, 6, 1))).to eq Time.local(2010,6,1,12,13,14)
+          expect(parse('12:13:14', :time, now: Time.local(2010, 6, 1))).to eq Time.local(2010,6,1,12,13,14)
         end
       end
 
@@ -304,7 +304,7 @@ describe Timeliness::Parser do
         end
 
         it "should use date from the specified zone" do
-          time = parse("12:13:14", :time, :zone => :utc)
+          time = parse("12:13:14", :time, zone: :utc)
           expect(time.year).to eq 2009
           expect(time.month).to eq 12
           expect(time.day).to eq 31
@@ -374,51 +374,51 @@ describe Timeliness::Parser do
       end
     end
 
-    context "with :strict => true" do
+    context "with strict: true" do
       it "should return nil from date string when type is datetime" do
-        time_array = parser._parse('2000-02-01', :datetime, :strict => true)
+        time_array = parser._parse('2000-02-01', :datetime, strict: true)
         expect(time_array).to be_nil
       end
 
       it "should return nil from datetime string when type is date" do
-        time_array = parser._parse('2000-02-01 12:13:14', :date, :strict => true)
+        time_array = parser._parse('2000-02-01 12:13:14', :date, strict: true)
         expect(time_array).to be_nil
       end
 
       it "should return nil from datetime string when type is time" do
-        time_array = parser._parse('2000-02-01 12:13:14', :time, :strict => true)
+        time_array = parser._parse('2000-02-01 12:13:14', :time, strict: true)
         expect(time_array).to be_nil
       end
 
       it "should parse date string when type is date" do
-        time_array = parser._parse('2000-02-01', :date, :strict => true)
+        time_array = parser._parse('2000-02-01', :date, strict: true)
         expect(time_array).not_to be_nil
       end
 
       it "should parse time string when type is time" do
-        time_array = parser._parse('12:13:14', :time, :strict => true)
+        time_array = parser._parse('12:13:14', :time, strict: true)
         expect(time_array).not_to be_nil
       end
 
       it "should parse datetime string when type is datetime" do
-        time_array = parser._parse('2000-02-01 12:13:14', :datetime, :strict => true)
+        time_array = parser._parse('2000-02-01 12:13:14', :datetime, strict: true)
         expect(time_array).not_to be_nil
       end
 
       it "should ignore strict parsing if no type specified" do
-        time_array = parser._parse('2000-02-01', :strict => true)
+        time_array = parser._parse('2000-02-01', strict: true)
         expect(time_array).not_to be_nil
       end
     end
 
     context "with :format option" do
       it "should return values if string matches specified format" do
-        time_array = parser._parse('2000-02-01 12:13:14', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+        time_array = parser._parse('2000-02-01 12:13:14', :datetime, format: 'yyyy-mm-dd hh:nn:ss')
         expect(time_array).to eq [2000,2,1,12,13,14,nil,nil]
       end
 
       it "should return nil if string does not match specified format" do
-        time_array = parser._parse('2000-02-01 12:13', :datetime, :format => 'yyyy-mm-dd hh:nn:ss')
+        time_array = parser._parse('2000-02-01 12:13', :datetime, format: 'yyyy-mm-dd hh:nn:ss')
         expect(time_array).to be_nil
       end
     end
@@ -520,7 +520,7 @@ describe Timeliness::Parser do
       it 'should return date array from Time value' do
         time = Time.now
         date_array = [time.year, time.month, time.day]
-        expect(current_date(:now => time)).to eq date_array
+        expect(current_date(now: time)).to eq date_array
       end
     end
 
@@ -528,26 +528,26 @@ describe Timeliness::Parser do
       it 'should return date array for utc zone' do
         time = Time.now.getutc
         date_array = [time.year, time.month, time.day]
-        expect(current_date(:zone => :utc)).to eq date_array
+        expect(current_date(zone: :utc)).to eq date_array
       end
 
       it 'should return date array for local zone' do
         time = Time.now
         date_array = [time.year, time.month, time.day]
-        expect(current_date(:zone => :local)).to eq date_array
+        expect(current_date(zone: :local)).to eq date_array
       end
 
       it 'should return date array for current zone' do
         Time.zone = 'London'
         time = Time.current
         date_array = [time.year, time.month, time.day]
-        expect(current_date(:zone => :current)).to eq date_array
+        expect(current_date(zone: :current)).to eq date_array
       end
 
       it 'should return date array for named zone' do
         time = Time.use_zone('London') { Time.current }
         date_array = [time.year, time.month, time.day]
-        expect(current_date(:zone => 'London')).to eq date_array
+        expect(current_date(zone: 'London')).to eq date_array
       end
     end
   end

@@ -121,17 +121,17 @@ module Timeliness
     # code is nil, then just the raw value is used.
     #
     @format_components = {
-      :year     => [ 0, 'unambiguous_year(year)'],
-      :month    => [ 1, 'month_index(month)'],
-      :day      => [ 2 ],
-      :hour     => [ 3, 'full_hour(hour, meridian ||= nil)'],
-      :min      => [ 4 ],
-      :sec      => [ 5 ],
-      :usec     => [ 6, 'microseconds(usec)'],
-      :offset   => [ 7, 'offset_in_seconds(offset)'],
-      :zone     => [ 7, 'zone'],
-      :zulu     => [ 7, 'offset_in_seconds("00:00")'],
-      :meridian => [ nil ]
+      year:     [ 0, 'unambiguous_year(year)'],
+      month:    [ 1, 'month_index(month)'],
+      day:      [ 2 ],
+      hour:     [ 3, 'full_hour(hour, meridian ||= nil)'],
+      min:      [ 4 ],
+      sec:      [ 5 ],
+      usec:     [ 6, 'microseconds(usec)'],
+      offset:   [ 7, 'offset_in_seconds(offset)'],
+      zone:     [ 7, 'zone'],
+      zulu:     [ 7, 'offset_in_seconds("00:00")'],
+      meridian: [ nil ]
     }
 
     # Mapping some common timezone abbreviations which are not mapped or

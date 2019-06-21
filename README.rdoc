@@ -41,9 +41,9 @@ the value for that type.
 
 Now let's get strict. Pass the :strict option with true and things get finicky
 
-  Timeliness.parse('2010-09-08 12:13:14', :date, :strict => true)     #=> nil
-  Timeliness.parse('2010-09-08 12:13:14', :time, :strict => true)     #=> nil
-  Timeliness.parse('2010-09-08 12:13:14', :datetime, :strict => true) #=> Wed Sep 08 12:13:14 1000 2010 i.e. the whole string is used
+  Timeliness.parse('2010-09-08 12:13:14', :date, strict: true)     #=> nil
+  Timeliness.parse('2010-09-08 12:13:14', :time, strict: true)     #=> nil
+  Timeliness.parse('2010-09-08 12:13:14', :datetime, strict: true) #=> Wed Sep 08 12:13:14 1000 2010 i.e. the whole string is used
 
 The date and time strings are not accepted for a datetime type. The strict option without a type is
 ignored.
@@ -62,7 +62,7 @@ or using a lambda thats evaluated when parsed
 
 It can also be specified with :now option:
 
-  Timeliness.parse('12:13:14', :now => Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
+  Timeliness.parse('12:13:14', now: Time.mktime(2010,9,8)) #=> Wed Sep 08 12:13:14 1000 2010
 
 As well conforming to the Ruby Time class style.
 
@@ -82,10 +82,10 @@ The last two options require that you have ActiveSupport timezone extension load
 
 You can also use the :zone option to control it for a single parse call:
 
-  Timeliness.parse('2010-09-08 12:13:14', :zone => :utc)        #=> Wed Sep 08 12:13:14 UTC 2010
-  Timeliness.parse('2010-09-08 12:13:14', :zone => :local)      #=> Wed Sep 08 12:13:14 1000 2010
-  Timeliness.parse('2010-09-08 12:13:14', :zone => :current)    #=> Wed Sep 08 12:13:14 1000 2010, with Time.zone = 'Melbourne'
-  Timeliness.parse('2010-09-08 12:13:14', :zone => 'Melbourne') #=> Wed Sep 08 12:13:14 1000 2010
+  Timeliness.parse('2010-09-08 12:13:14', zone: :utc)        #=> Wed Sep 08 12:13:14 UTC 2010
+  Timeliness.parse('2010-09-08 12:13:14', zone: :local)      #=> Wed Sep 08 12:13:14 1000 2010
+  Timeliness.parse('2010-09-08 12:13:14', zone: :current)    #=> Wed Sep 08 12:13:14 1000 2010, with Time.zone = 'Melbourne'
+  Timeliness.parse('2010-09-08 12:13:14', zone: 'Melbourne') #=> Wed Sep 08 12:13:14 1000 2010
 
 Remember, you must have ActiveSupport timezone extension loaded to use the last two examples.
 
@@ -94,8 +94,8 @@ Remember, you must have ActiveSupport timezone extension loaded to use the last 
 
 To get super finicky, you can restrict the parsing to a single format with the :format option
 
-  Timeliness.parse('2010-09-08 12:13:14', :format => 'yyyy-mm-dd hh:nn:ss')  #=> Wed Sep 08 12:13:14 UTC 2010
-  Timeliness.parse('08/09/2010 12:13:14', :format => 'yyyy-mm-dd hh:nn:ss')  #=> nil
+  Timeliness.parse('2010-09-08 12:13:14', format: 'yyyy-mm-dd hh:nn:ss')  #=> Wed Sep 08 12:13:14 UTC 2010
+  Timeliness.parse('08/09/2010 12:13:14', format: 'yyyy-mm-dd hh:nn:ss')  #=> nil
 
 
 === String with Offset or Zone Abbreviations
@@ -280,7 +280,7 @@ Because formats are evaluated in order, adding a format which may be ambiguous w
 format, will mean your format is ignored. If you need to make your new format higher precedence than
 an existing format, you can include the before option like so
 
-  Timeliness.add_formats(:time, 'ss:nn:hh', :before => 'hh:nn:ss')
+  Timeliness.add_formats(:time, 'ss:nn:hh', before: 'hh:nn:ss')
 
 Now a time of '59:30:23' will be interpreted as 11:30:59 pm. This option saves you adding a new one
 and deleting an old one to get it to work.
