@@ -13,7 +13,7 @@ if defined?(JRUBY_VERSION)
 end
 
 n = 10_000
-Benchmark.bm do |x|
+Benchmark.bm(40) do |x|
   x.report('timeliness - datetime') {
     n.times do
       Timeliness::Parser.parse("2000-01-04 12:12:12", :datetime)
