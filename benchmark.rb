@@ -131,22 +131,6 @@ Benchmark.bm(40) do |x|
     end
   }
 
-  if defined?(ParseDate)
-    x.report('parsedate - valid') {
-      n.times do
-        arr = ParseDate.parsedate("2000-01-04 12:12:12")
-        Date.new(*arr[0..2])
-        Time.mktime(*arr)
-      end
-    }
-
-    x.report('parsedate - invalid ') {
-      n.times do
-        arr = ParseDate.parsedate("2000-00-04 12:12:12")
-      end
-    }
-  end
-
   x.report('strptime - valid') {
     n.times do
       DateTime.strptime("2000-01-04 12:12:12", '%Y-%m-%d %H:%M:%s')
