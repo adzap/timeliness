@@ -29,12 +29,11 @@ module Timeliness
       end
 
       # Replace placeholders with token regexps
-      format.scan(/%<(\d)>/).each {|token_index|
-        token_index = token_index.first
-        token_regexp_str, arg_key = found_tokens[token_index.to_i]
-        format.gsub!("%<#{token_index}>", token_regexp_str)
+      format.gsub!(/%<(\d+)>/) do |placeholder|
+        token_regexp_str, arg_key = found_tokens[$1.to_i]
         token_order << arg_key
-      }
+        token_regexp_str
+      end
 
       define_process_method(token_order.compact)
       @regexp_string = format
