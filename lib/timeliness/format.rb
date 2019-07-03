@@ -18,8 +18,8 @@ module Timeliness
 
       # Substitute tokens with numbered placeholder
       Definitions.sorted_token_keys.each do |token|
-        token_regexp_str, arg_key = Definitions.format_tokens[token]
-        if format.gsub!(/#{token}/, "%<#{found_tokens.size}>")
+        if format.gsub!(token, "%<#{found_tokens.size}>")
+          token_regexp_str, arg_key = Definitions.format_tokens[token]
           if arg_key
             token_regexp_str = "(#{token_regexp_str})"
             @token_count += 1
