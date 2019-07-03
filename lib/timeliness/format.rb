@@ -24,7 +24,7 @@ module Timeliness
             token_regexp_str = "(#{token_regexp_str})"
             @token_count += 1
           end
-          found_tokens << [token_regexp_str, arg_key]
+          found_tokens << [ token_regexp_str, arg_key ]
         end
       end
 
@@ -54,12 +54,11 @@ module Timeliness
         position, code = Definitions.format_components[component]
         values[position] = code || "#{component}.to_i" if position
       end
-      instance_eval <<-DEF
-        def process(#{components.join(',')})
-          [#{values.map {|i| i || 'nil' }.join(',')}]
-        end
+      instance_eval <<~DEF
+      def process(#{components.join(',')})
+        [#{values.map { |i| i || 'nil' }.join(',')}]
+      end
       DEF
     end
-
   end
 end
