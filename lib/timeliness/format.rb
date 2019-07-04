@@ -12,19 +12,28 @@ module Timeliness
 
     def compile!
       @token_count = 0
+      found_tokens, token_order = [], []
+
       format = format_string.dup
       format.gsub!(/([\.\\])/, '\\\\\1') # escapes dots and backslashes
-      found_tokens, token_order = [], []
 
       # Substitute tokens with numbered placeholder
       Definitions.sorted_token_keys.each do |token|
-        if format.gsub!(token, "%<#{found_tokens.size}>")
+        count = 0
+        format.gsub!(token) do |_|
           token_regexp_str, arg_key = Definitions.format_tokens[token]
+          token_index = found_tokens.size
+
           if arg_key
+            raise CompilationFailed, "Token '#{token}' was found more than once in format '#{format_string}'. This has unexpected effects should be removed." if count > 0
+            count += 1
+
             token_regexp_str = "(#{token_regexp_str})"
             @token_count += 1
           end
           found_tokens << [ token_regexp_str, arg_key ]
+
+          "%<#{token_index}>"
         end
       end
 

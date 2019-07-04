@@ -16,6 +16,12 @@ describe Timeliness::Format do
         Timeliness::Format.new('|--[)').compile!
       }.to raise_error(Timeliness::Format::CompilationFailed)
     end
+
+    it 'should raise compilation error if token with captured arg is present more than once' do
+      expect { 
+        Timeliness::Format.new('dd-mm-yyyy-dd').compile!
+      }.to raise_error(Timeliness::Format::CompilationFailed)
+    end
   end
 
   describe "#process" do
