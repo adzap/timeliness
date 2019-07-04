@@ -20,7 +20,7 @@ module Timeliness
       # Substitute tokens with numbered placeholder
       Definitions.sorted_token_keys.each do |token|
         count = 0
-        format.gsub!(token) do |_|
+        format.gsub!(token) do
           token_regexp_str, arg_key = Definitions.format_tokens[token]
           token_index = found_tokens.size
 
@@ -38,7 +38,7 @@ module Timeliness
       end
 
       # Replace placeholders with token regexps
-      format.gsub!(/%<(\d+)>/) do |placeholder|
+      format.gsub!(/%<(\d+)>/) do
         token_regexp_str, arg_key = found_tokens[$1.to_i]
         token_order << arg_key
         token_regexp_str
