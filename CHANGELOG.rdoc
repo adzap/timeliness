@@ -1,4 +1,4 @@
-= 0.4.4 - 2019-07-04
+= 0.4.4 - 2019-08-06
 * Raise compilation error if token with capturing arg is used more than once in a format
 * Some small internal refactorings in format compilation
 
