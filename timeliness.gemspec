@@ -13,8 +13,6 @@ Gem::Specification.new do |s|
   s.description = %q{Fast date/time parser with customisable formats, timezone and I18n support.}
   s.license     = "MIT"
 
-  s.rubyforge_project = %q{timeliness}
-
   s.add_development_dependency 'activesupport', '>= 3.2'
   s.add_development_dependency 'tzinfo', '>= 0.3.31'
   s.add_development_dependency 'rspec', '~> 3.4'
