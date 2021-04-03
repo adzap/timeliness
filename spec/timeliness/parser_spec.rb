@@ -6,7 +6,7 @@ describe Timeliness::Parser do
     end
   end
 
-  around(:all) do |example|
+  around do |example|
     current_zone = Time.zone
     example.call
     Time.zone = current_zone

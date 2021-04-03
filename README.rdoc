@@ -1,7 +1,7 @@
 = Timeliness {<img src="https://travis-ci.org/adzap/timeliness.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/adzap/timeliness]
 
-* Source:  http://github.com/adzap/timeliness
-* Bugs:    http://github.com/adzap/timeliness/issues
+* Source:  https://github.com/adzap/timeliness
+* Bugs:    https://github.com/adzap/timeliness/issues
 
 == Description
 
@@ -16,7 +16,7 @@ Date/time parser for Ruby with the following features:
 * Has no dependencies.
 * Works with Ruby MRI >= 2.2
 
-Extracted from the {validates_timeliness gem}[http://github.com/adzap/validates_timeliness], it has been rewritten cleaner and much faster. It's most suitable for when
+Extracted from the {validates_timeliness gem}[https://github.com/adzap/validates_timeliness], it has been rewritten cleaner and much faster. It's most suitable for when
 you need to control the parsing behaviour. It's faster than the Time/Date class parse methods, so it
 has general appeal.
 
@@ -51,14 +51,14 @@ ignored.
 
 === Specify the Current Date
 
-Notice a time only string will return with a date value. The date value can be configured globally 
+Notice a time only string will return with a date value. The date value can be configured globally
 with this setting:
 
   Timeliness.date_for_time_type = [2010, 1, 1]
 
 or using a lambda thats evaluated when parsed
 
-  Timeliness.date_for_time_type = lambda { Time.now } 
+  Timeliness.date_for_time_type = lambda { Time.now }
 
 It can also be specified with :now option:
 
@@ -143,7 +143,7 @@ You just need to add this line to an initializer or other application file:
 
 == Formats
 
-The gem has default formats included which can be easily added to using the format syntax. Also 
+The gem has default formats included which can be easily added to using the format syntax. Also
 formats can be easily removed so that they are no longer considered valid.
 
 Below are the default formats. If you think they are easy to read then you will be happy to know
@@ -228,7 +228,7 @@ Here is what each format token means:
 All other characters are considered literal. For the technically minded, these formats are compiled
 into a single regular expression
 
-To see all defined formats look at the {source code}[http://github.com/adzap/timeliness/tree/master/lib/timeliness/formats.rb].
+To see all defined formats look at the {source code}[https://github.com/adzap/timeliness/tree/master/lib/timeliness/formats.rb].
 
 
 == Settings
@@ -252,7 +252,7 @@ You can switch back to US formats with
 
 ==== Thread Safety
 
-The switching of formats is threadsafe (since v0.4.0), however for each new thread the format default will be 
+The switching of formats is threadsafe (since v0.4.0), however for each new thread the format default will be
 the gem default, being the US format. To control default for your app and each new thread, use the config
 
   Timeliness.ambiguous_date_format = :euro
@@ -301,7 +301,7 @@ Now you get:
 
 == Credits
 
-* Adam Meehan (adam.meehan@gmail.com, http://github.com/adzap)
+* Adam Meehan (adam.meehan@gmail.com, https://github.com/adzap)
 
 
 == License

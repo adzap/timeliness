@@ -1,16 +1,19 @@
+dist: focal
+os: linux
 language: ruby
-before_install:
-  - gem install bundler
+before_install: gem install bundler
 cache: bundler
 
 rvm:
-  # - jruby
-  # - truffleruby
-  # - rbx-3
-  - "2.3.8"
-  - "2.4.5"
-  - "2.5.3"
-  - "2.6.1"
+  - "2.5.8"
+  - "2.6.6"
+  - "2.7.2"
+  - "3.0.0"
+  - ruby-head
+
+jobs:
+  allow_failures:
+    - rvm: ruby-head
 
 script: 'bundle exec rspec'
 
