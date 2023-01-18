@@ -40,7 +40,7 @@ module Timeliness
           Definitions.send("#{type}_format_set").match(string, options[:format])
         else
           values = nil
-          Definitions.format_sets(type, string).find {|set| values = set.match(string, options[:format]) }
+          Definitions.format_sets(type, string).find { |set| values = set.match(string, options[:format]) }
           values
         end
       rescue

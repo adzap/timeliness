@@ -104,13 +104,13 @@ describe Timeliness::Parser do
         it 'should return value shifted by positive offset in default timezone' do
           value = parse("2000-06-01T12:00:00+02:00")
           expect(value).to eq Time.zone.local(2000,6,1,3,0,0)
-          expect(value.utc_offset).to eq -7.hours
+          expect(value.utc_offset).to eq(-7.hours)
         end
 
         it 'should return value shifted by negative offset in default timezone' do
           value = parse("2000-06-01T12:00:00-01:00")
           expect(value).to eq Time.zone.local(2000,6,1,6,0,0)
-          expect(value.utc_offset).to eq -7.hours
+          expect(value.utc_offset).to eq(-7.hours)
         end
       end
     end
