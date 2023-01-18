@@ -91,6 +91,26 @@ describe Timeliness::Format do
           expect(format.process('2', 'Enero', '2000')).to eq [2000,1,2,nil,nil,nil,nil,nil]
         end
 
+        context "with upper case month abbreviations" do
+          before(:all) do
+            I18n.backend.store_translations :es, date: { abbr_month_names: %w{ ~ ENE FEB MAR } }
+          end
+
+          it 'should parse abbreviated month for current locale case insensitively' do
+            expect(format_for('d-mmm-yyyy').process('01', 'mar', '2023')).to eq [2023,3,1,nil,nil,nil,nil,nil]
+          end
+        end
+
+        context "with upper case month names" do
+          before(:all) do
+            I18n.backend.store_translations :es, date: { month_names: %w{ ~ ENERO FEBRERO MARZO } }
+          end
+
+          it 'should parse full month for current locale case insensitively' do
+            expect(format_for('d-mmm-yyyy').process('01', 'mArZo', '2023')).to eq [2023,3,1,nil,nil,nil,nil,nil]
+          end
+        end
+
         after(:all) do
           I18n.locale = :en
         end
