@@ -3,6 +3,9 @@ $:.push File.expand_path("../lib", __FILE__)
 require "timeliness/version"
 
 Gem::Specification.new do |s|
+
+  github_url    = 'https://github.com/adzap/timeliness'
+
   s.name        = "timeliness"
   s.version     = Timeliness::VERSION
   s.platform    = Gem::Platform::RUBY
@@ -12,6 +15,14 @@ Gem::Specification.new do |s|
   s.summary     = %q{Date/time parsing for the control freak.}
   s.description = %q{Fast date/time parser with customisable formats, timezone and I18n support.}
   s.license     = "MIT"
+
+  s.metadata = {
+    "rubygems_mfa_required" => "true",
+    "bug_tracker_uri" => "#{github_url}/issues",
+    "changelog_uri"   => "#{github_url}/blob/master/CHANGELOG.rdoc",
+    "source_code_uri" => "#{github_url}",
+    "wiki_uri"        => "#{github_url}/wiki",
+  }
 
   s.add_development_dependency 'activesupport', '>= 3.2'
   s.add_development_dependency 'tzinfo', '>= 0.3.31'
