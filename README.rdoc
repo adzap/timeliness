@@ -1,4 +1,4 @@
-= Timeliness {<img src="https://travis-ci.org/adzap/timeliness.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/adzap/timeliness]
+= Timeliness {rdoc-image:https://github.com/adzap/timeliness/actions/workflows/ci.yml/badge.svg?branch=master}[https://github.com/adzap/timeliness/actions/workflows/ci.yml]
 
 * Source:  https://github.com/adzap/timeliness
 * Bugs:    https://github.com/adzap/timeliness/issues
