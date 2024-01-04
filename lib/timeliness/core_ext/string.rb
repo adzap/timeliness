@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/core_ext/object/blank'
+
 class String
 
   # Form can be either :utc (default) or :local.
