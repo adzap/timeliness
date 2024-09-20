@@ -61,6 +61,7 @@ describe Timeliness::FormatSet do
         'ddd mmm d hh:nn:ss tz yyyy' => {pass: ['Sat Jul 19 12:00:00 EST 2008'], fail: []},
         'yyyy-mm-ddThh:nn:sszo' => {pass: ['2008-07-19T12:00:00+10:00'], fail: ['2008-07-19T12:00:00Z+10:00']},
         'yyyy-mm-ddThh:nn:ss.uzt' => {pass: ['2019-06-07T03:35:55.100000Z'], fail: []},
+        'dd.mm.yyyy hh:nn' => {pass: ['07.06.2019 03:35'], fail: []},
       }
       format_tests.each do |format, values|
         it "should correctly match datetimes in format '#{format}'" do

@@ -72,6 +72,8 @@ module Timeliness
       'dd-mm-yyyy hh:nn:ss',
       'dd-mm-yyyy h:nn_ampm',
       'dd-mm-yyyy h:nn',
+      'dd.mm.yyyy hh:nn:ss',
+      'dd.mm.yyyy h:nn',
       'ddd, dd mmm yyyy hh:nn:ss tz', # RFC 822
       'ddd, dd mmm yyyy hh:nn:ss zo', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
