@@ -77,6 +77,7 @@ module Timeliness
       'ddd, dd mmm yyyy hh:nn:ss tz', # RFC 822
       'ddd, dd mmm yyyy hh:nn:ss zo', # RFC 822
       'ddd mmm d hh:nn:ss zo yyyy', # Ruby time string
+      'yyyy-mm-ddThh:nn', # ISO 8601 without seconds
       'yyyy-mm-ddThh:nn:ss', # ISO 8601
       'yyyy-mm-ddThh:nn:sszo', # ISO 8601 with zone offset
       'yyyy-mm-ddThh:nn:sszt', # ISO 8601 with 'Zulu time' (i.e. Z) UTC zone designator
