@@ -1,3 +1,4 @@
 --color
+--require debug
 --require spec_helper
 --require timeliness_helper
