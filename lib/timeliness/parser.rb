@@ -4,11 +4,14 @@ module Timeliness
 
     class << self
 
-      def parse(value, *args)
+      def parse(value, type=nil, **options)
         return value if acts_like_temporal?(value)
         return nil unless parseable?(value)
 
-        type, options = type_and_options_from_args(args)
+        if type && !type.is_a?(Symbol)
+          options[:now] = type if type
+          type = nil
+        end
 
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
