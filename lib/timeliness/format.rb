@@ -63,6 +63,7 @@ module Timeliness
         position, code = Definitions.format_components[component]
         values[position] = code || "#{component}.to_i" if position
       end
+      components << '*_' # absorb any excess arguments not used by format
       instance_eval <<-DEF
       def process(#{components.join(',')})
         [#{values.map { |i| i || 'nil' }.join(',')}]
