@@ -4,3 +4,4 @@ gemspec
 
 gem 'activesupport', '~> 6.0.0'
 gem 'debug'
+gem 'memory_profiler'
