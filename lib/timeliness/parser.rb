@@ -98,8 +98,10 @@ module Timeliness
 
       def current_time_in_zone(zone)
         case zone
-        when :utc, :local
-          Time.now.send("get#{zone}")
+        when :utc
+          Time.now.getutc
+        when :local
+          Time.now.getlocal
         when :current
           Time.current
         else
@@ -110,8 +112,10 @@ module Timeliness
       def shift_time_to_zone(time, zone=nil)
         zone ||= Timeliness.configuration.default_timezone
         case zone
-        when :utc, :local
-          time.send("get#{zone}")
+        when :utc
+          time.getutc
+        when  :local
+          time.getlocal
         when :current
           time.in_time_zone
         else
