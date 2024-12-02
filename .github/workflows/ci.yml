@@ -21,4 +21,6 @@ jobs:
         bundler-cache: true # 'bundle install' and cache gems
         ruby-version: ${{ matrix.ruby-version }}
     - name: Run tests
+      env:
+          RUBYOPT: ${{ matrix.ruby == 'ruby-head' && '--enable=frozen-string-literal' || '' }}
       run: bundle exec rspec
