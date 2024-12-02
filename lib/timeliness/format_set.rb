@@ -20,8 +20,8 @@ module Timeliness
         format = Format.new(format_string).compile!
         @formats_hash[format_string] = format
         @match_indexes[index] = format
-        regexp_string = "#{regexp_string}(#{format.regexp_string})|"
-        index + format.token_count + 1 # add one for wrapper capture
+        regexp_string.concat("(?>#{format.regexp_string})|")
+        index + format.token_count
       }
       @regexp = %r[\A(?:#{regexp_string.chop})\z]
       self
@@ -31,10 +31,10 @@ module Timeliness
       format = single_format(format_string) if format_string
       match_regexp = format && format.regexp || @regexp
 
-      if match_data = match_regexp.match(string)
-        index    = match_data.captures.index(string)
-        start    = index + 1
-        values   = match_data.captures[start..(start+7)].compact
+      match_regexp.match(string) do |match_data|
+        captures = match_data.captures                  # For a multi-format regexp there are lots of nils
+        index    = captures.find_index { |e| !e.nil? }  # Find the start of captures for matched format
+        values   = captures.values_at(index..(index+7))
         format ||= @match_indexes[index]
         format.process(*values)
       end

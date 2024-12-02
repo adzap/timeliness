@@ -46,7 +46,7 @@ module Timeliness
 
       define_process_method(token_order.compact)
       @regexp_string = format
-      @regexp = Regexp.new("^(#{format})$")
+      @regexp = Regexp.new("^(?>#{format})$")
       self
     rescue => ex
       raise CompilationFailed, "The format '#{format_string}' failed to compile using regexp string #{format}. Error message: #{ex.inspect}"
@@ -63,6 +63,7 @@ module Timeliness
         position, code = Definitions.format_components[component]
         values[position] = code || "#{component}.to_i" if position
       end
+      components << '*_' # absorb any excess arguments not used by format
       instance_eval <<-DEF
       def process(#{components.join(',')})
         [#{values.map { |i| i || 'nil' }.join(',')}]

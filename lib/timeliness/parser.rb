@@ -4,11 +4,14 @@ module Timeliness
 
     class << self
 
-      def parse(value, *args)
+      def parse(value, type=nil, **options)
         return value if acts_like_temporal?(value)
         return nil unless parseable?(value)
 
-        type, options = type_and_options_from_args(args)
+        if type && !type.is_a?(Symbol)
+          options[:now] = type if type
+          type = nil
+        end
 
         time_array = _parse(value, type, options)
         return nil if time_array.nil?
@@ -40,7 +43,7 @@ module Timeliness
           Definitions.send("#{type}_format_set").match(string, options[:format])
         else
           values = nil
-          Definitions.format_sets(type, string).find { |set| values = set.match(string, options[:format]) }
+          Definitions.format_sets(type, string).any? { |set| values = set.match(string, options[:format]) }
           values
         end
       rescue
@@ -95,8 +98,10 @@ module Timeliness
 
       def current_time_in_zone(zone)
         case zone
-        when :utc, :local
-          Time.now.send("get#{zone}")
+        when :utc
+          Time.now.getutc
+        when :local
+          Time.now.getlocal
         when :current
           Time.current
         else
@@ -107,8 +112,10 @@ module Timeliness
       def shift_time_to_zone(time, zone=nil)
         zone ||= Timeliness.configuration.default_timezone
         case zone
-        when :utc, :local
-          time.send("get#{zone}")
+        when :utc
+          time.getutc
+        when  :local
+          time.getlocal
         when :current
           time.in_time_zone
         else

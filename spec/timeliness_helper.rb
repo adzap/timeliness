@@ -12,20 +12,20 @@ module TimelinessHelpers
     Timeliness::Definitions
   end
 
-  def parse(*args)
-    Timeliness::Parser.parse(*args)
+  def parse(value, type=nil, **args)
+    Timeliness::Parser.parse(value, type, **args)
   end
 
   def current_date(options={})
     Timeliness::Parser.send(:current_date, options)
   end
 
-  def should_parse(*args)
-    expect(Timeliness::Parser.parse(*args)).not_to be_nil
+  def should_parse(value, type=nil, **args)
+    expect(Timeliness::Parser.parse(value, type, **args)).not_to be_nil
   end
 
-  def should_not_parse(*args)
-    expect(Timeliness::Parser.parse(*args)).to be_nil
+  def should_not_parse(value, type=nil, **args)
+    expect(Timeliness::Parser.parse(value, type, **args)).to be_nil
   end
 end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Timeliness
   module Definitions
 
@@ -83,7 +85,7 @@ module Timeliness
       'yyyy-mm-ddThh:nn:sszt', # ISO 8601 with 'Zulu time' (i.e. Z) UTC zone designator
       'yyyy-mm-ddThh:nn:ss.u', # ISO 8601 with usec
       'yyyy-mm-ddThh:nn:ss.uzo', # ISO 8601 with usec and offset
-      'yyyy-mm-ddThh:nn:ss.uzt', # ISO 8601 with usec and 'Zulu time' (i.e. Z) UTC zone designator 
+      'yyyy-mm-ddThh:nn:ss.uzt', # ISO 8601 with usec and 'Zulu time' (i.e. Z) UTC zone designator
       'yyyy-mm-dd hh:nn:ss zo', # Ruby time string in later versions
       'yyyy-mm-dd hh:nn:ss tz', # Ruby time string for UTC in later versions
     ]
