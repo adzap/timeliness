@@ -12,11 +12,6 @@ jobs:
       matrix:
         ruby-version: [2.7, 3.0, 3.1, 3.2, 3.3, ruby-head, jruby-9.2, jruby-9.3, jruby-head]
         channel: ['stable']
-        include:
-          - ruby: 'ruby-head'
-            channel: 'experimental'
-          - ruby: 'jruby-head'
-            channel: 'experimental'
     continue-on-error: ${{ endsWith(matrix.ruby-version, 'ruby-head') || matrix.ruby-version == 'jruby-head' }}
     steps:
     - uses: actions/checkout@v4
