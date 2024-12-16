@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Timeliness
   class FormatSet
     attr_reader :formats, :regexp
@@ -15,7 +17,7 @@ module Timeliness
     # Compiles the formats into one big regexp. Stores the index of where
     # each format's capture values begin in the matchdata.
     def compile!
-      regexp_string = ''
+      regexp_string = +''
       @formats.inject(0) { |index, format_string|
         format = Format.new(format_string).compile!
         @formats_hash[format_string] = format
