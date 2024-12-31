@@ -1,4 +1,6 @@
+require 'active_support'
 require 'active_support/time'
+require 'active_support/core_ext/object'
 require 'timecop'
 require 'timeliness'
 require 'timeliness/core_ext'
