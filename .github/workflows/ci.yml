@@ -12,27 +12,27 @@ jobs:
         channel: ['stable']
         include:
           - gemfile: activesupport_5_2
-            ruby: 2.7
+            ruby-version: 2.7
           - gemfile: activesupport_6_1
-            ruby: 3.1
+            ruby-version: 3.1
           - gemfile: activesupport_7_0
-            ruby: 3.0
+            ruby-version: 3.0
           - gemfile: activesupport_7_0
-            ruby: 3.1
+            ruby-version: 3.1
           - gemfile: activesupport_7_1
-            ruby: 3.1
+            ruby-version: 3.1
           - gemfile: activesupport_7_1
-            ruby: 3.2
+            ruby-version: 3.2
           - gemfile: activesupport_7_2
-            ruby: 3.1
+            ruby-version: 3.1
           - gemfile: activesupport_7_2
-            ruby: 3.2
+            ruby-version: 3.2
           - gemfile: activesupport_8_0
-            ruby: 3.2
+            ruby-version: 3.2
           - gemfile: activesupport_8_0
-            ruby: 3.3
+            ruby-version: 3.3
           - gemfile: activesupport_8_0
-            ruby: 3.4
+            ruby-version: 3.4
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby ${{ matrix.ruby-version }}
