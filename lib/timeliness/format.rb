@@ -11,7 +11,6 @@ module Timeliness
     end
 
     def compile!
-      @token_count = 0
       found_tokens, token_order = [], []
 
       format = format_string.dup
@@ -19,20 +18,16 @@ module Timeliness
 
       # Substitute tokens with numbered placeholder
       Definitions.sorted_token_keys.each do |token|
-        count = 0
         format.gsub!(token) do
           token_regexp_str, arg_key = Definitions.format_tokens[token]
-          token_index = found_tokens.size
 
-          if arg_key
+          if arg_key && found_tokens.rassoc(arg_key)
             raise CompilationFailed, "Token '#{token}' was found more than once in format '#{format_string}'. This has unexpected effects should be removed." if count > 0
-            count += 1
-
-            token_regexp_str = "(#{token_regexp_str})"
-            @token_count += 1
           end
+
           found_tokens << [ token_regexp_str, arg_key ]
 
+          token_index = found_tokens.size - 1
           "%<#{token_index}>"
         end
       end
@@ -40,11 +35,18 @@ module Timeliness
       # Replace placeholders with token regexps
       format.gsub!(/%<(\d+)>/) do
         token_regexp_str, arg_key = found_tokens[$1.to_i]
-        token_order << arg_key
-        token_regexp_str
+
+        if arg_key
+          token_order << arg_key
+          "(#{token_regexp_str})"
+        else
+          token_regexp_str
+        end
       end
 
-      define_process_method(token_order.compact)
+      @token_count = token_order.size
+
+      define_process_method(token_order)
       @regexp_string = format
       @regexp = Regexp.new("^(?>#{format})$")
       self
