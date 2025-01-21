@@ -1,10 +1,17 @@
+# frozen_string_literal: true
+
 module Timeliness
   module Helpers
+    # Helper methods used in format component processing. See Definitions.
 
     def full_hour(hour, meridian)
       hour = hour.to_i
       return hour if meridian.nil?
-      if meridian.delete('.').downcase == 'am'
+
+      meridian.delete!('.')
+      meridian.downcase!
+
+      if meridian == 'am'
         raise(ArgumentError) if hour == 0 || hour > 12
         hour == 12 ? 0 : hour
       else
@@ -20,9 +27,9 @@ module Timeliness
       end
       year.to_i
     end
-    
+
     def month_index(month)
-      return month.to_i if month.to_i > 0 || /0+/ =~ month
+      return month.to_i if month.match?(/\d/)
       (month.length > 3 ? month_names : abbr_month_names).index { |str| month.casecmp?(str) }
     end
 
@@ -39,10 +46,8 @@ module Timeliness
     end
 
     def offset_in_seconds(offset)
-      sign = offset =~ /^-/ ? -1 : 1
-      parts = offset.scan(/\d\d/).map {|p| p.to_f }
-      parts[1] = parts[1].to_f / 60
-      (parts[0] + parts[1]) * sign * 3600
+      offset =~ /^([-+])?(\d{2}):?(\d{2})/
+      ($1 == '-' ? -1 : 1) * ($2.to_f * 3600 + $3.to_f)
     end
 
     def i18n_loaded?

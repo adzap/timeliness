@@ -31,12 +31,12 @@ module Timeliness
 
     def match(string, format_string=nil)
       format = single_format(format_string) if format_string
-      match_regexp = format && format.regexp || @regexp
+      match_regexp = format ? format.regexp : @regexp
 
-      match_regexp.match(string) do |match_data|
-        captures = match_data.captures                  # For a multi-format regexp there are lots of nils
-        index    = captures.find_index { |e| !e.nil? }  # Find the start of captures for matched format
-        values   = captures.values_at(index..(index+7))
+      if (match_data = match_regexp.match(string))
+        captures = match_data.captures # For a multi-format regexp there are lots of nils
+        index = captures.index { |e| !e.nil? } # Find the start of captures for matched format
+        values = captures[index, 8]
         format ||= @match_indexes[index]
         format.process(*values)
       end

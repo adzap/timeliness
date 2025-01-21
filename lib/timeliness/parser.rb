@@ -18,19 +18,20 @@ module Timeliness
 
         default_values_by_type(time_array, type, options) unless type == :datetime
 
-        make_time(time_array[0..7], options[:zone])
+        make_time(time_array, options[:zone])
       rescue NoMethodError => ex
         raise ex unless ex.message =~ /undefined method `(zone|use_zone|current)' for Time:Class/
         raise MissingTimezoneSupport, "ActiveSupport timezone support must be loaded to use timezones other than :utc and :local."
       end
 
       def make_time(time_array, zone_option=nil)
-        return nil unless fast_date_valid_with_fallback(*time_array[0..2])
+        return nil unless fast_date_valid_with_fallback(time_array[0], time_array[1], time_array[2])
 
         zone, offset = zone_and_offset(time_array[7]) if time_array[7]
 
         value = create_time_in_zone(time_array[0..6].compact, zone || zone_option)
         value = shift_time_to_zone(value, zone_option) if zone
+
         return nil unless value
 
         offset ? value + (value.utc_offset - offset) : value
@@ -74,9 +75,12 @@ module Timeliness
       def default_values_by_type(values, type, options)
         case type
         when :date
-          values[3..7] = nil
+          values.fill(nil, 3..7)
         when :time
-          values[0..2] = current_date(options)
+          current_date = current_date(options)
+          values[0] = current_date[0]
+          values[1] = current_date[1]
+          values[2] = current_date[2]
         when nil
           dummy_date = current_date(options)
           values[0] ||= dummy_date[0]
