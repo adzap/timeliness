@@ -47,7 +47,7 @@ module Timeliness
 
     def offset_in_seconds(offset)
       offset =~ /^([-+])?(\d{2}):?(\d{2})/
-      ($1 == '-' ? -1 : 1) * ($2.to_f * 3600 + $3.to_f)
+      ($1 == '-' ? -1 : 1) * ($2.to_f * 3600 + $3.to_f * 60)
     end
 
     def i18n_loaded?
