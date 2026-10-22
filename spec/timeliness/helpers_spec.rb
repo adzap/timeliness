@@ -93,6 +93,11 @@ describe Timeliness::Helpers do
       expect(microseconds('999')).to eq 999000
       expect(microseconds('999999')).to eq 999999
     end
+
+    it "should not lose precision to float rounding" do
+      expect(microseconds('521345')).to eq 521345
+      expect(microseconds('000001')).to eq 1
+    end
   end
 
   describe "#offset_in_seconds" do
