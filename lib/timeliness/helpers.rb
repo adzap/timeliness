@@ -42,7 +42,7 @@ module Timeliness
     end
 
     def microseconds(usec)
-      (".#{usec}".to_f * 1_000_000).to_i
+      usec.to_s[0, 6].ljust(6, "0").to_i
     end
 
     def offset_in_seconds(offset)
